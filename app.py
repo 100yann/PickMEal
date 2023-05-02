@@ -29,13 +29,14 @@ class GUI(customtkinter.CTk):
         self.new_meals.grid(row=2, column=0, pady=20)
 
         #create a button to store the entry input
-        self.btn_save = customtkinter.CTkButton(self, text='Save')
+        self.btn_save = customtkinter.CTkButton(self, text='Save', command=self.save_meals)
         self.btn_save.grid(row=3,column=0, pady=10)
 
-    # def save_meals(self):
-    #     user_input = self.new_meals.get()
-    #     if len(user_input) > 0:
-    #         pass
+    def save_meals(self):
+        user_input = self.new_meals.get()
+        if len(user_input) > 0:
+            with open('saved_meals.txt', 'a') as file:
+                file.write(f'{user_input}\n')
 
 
 
