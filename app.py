@@ -99,7 +99,8 @@ class GUI(customtkinter.CTk):
         user_input = self.new_meals.get()
         if len(user_input) > 0:
             with open('saved_meals.txt', 'a') as file:
-                file.write(f'{user_input}\n')
+                for meal in user_input.split(','): 
+                    file.write(f'{meal.strip()}\n')
         else:
             CTkMessagebox(self, 
                           width=300,
