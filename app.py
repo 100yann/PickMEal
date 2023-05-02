@@ -69,21 +69,31 @@ class GUI(customtkinter.CTk):
         self.instructions.destroy()
         self.home_frame.destroy()
 
-        #create an entry for new input
-        self.new_meals = customtkinter.CTkEntry(self, width=500, placeholder_text='Enter one or multiple meals, separated by a comma')
-        self.new_meals.pack(pady=40)
+        #create new instructions
+        self.instructions = customtkinter.CTkLabel(self,
+                                                   text='Enter one or multiple meals separated by a comma, or edit your list of existing meals.',
+                                                   width=600,
+                                                   height=100,
+                                                   font=('Facit', 18),
+                                                   bg_color=BG_COLOR,
+                                                   wraplength=500)
+        self.instructions.pack(pady=(70,0))
 
+        #create an entry for new input
+        self.new_meals = customtkinter.CTkEntry(self, width=500)
+        self.new_meals.pack(pady=(0, 20))
 
         #create a frame for the two buttons
         self.frame = customtkinter.CTkFrame(self, fg_color=BG_COLOR)
         self.frame.pack()
+
         #create a button to store the entry input
         self.save_btn = customtkinter.CTkButton(self.frame, text='Save', command=self.save_meals)
-        self.save_btn.grid(column=0, row=1, padx=20)
+        self.save_btn.grid(column=0, row=1, padx=10)
 
         #create a button to delete an existing meal from the saved_meals.txt
         self.del_btn = customtkinter.CTkButton(self.frame, text='Edit', command=self.del_meals)
-        self.del_btn.grid(column=1, row=1, padx=20)
+        self.del_btn.grid(column=1, row=1, padx=10)
 
     def save_meals(self):
         user_input = self.new_meals.get()
