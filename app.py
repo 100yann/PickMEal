@@ -2,6 +2,7 @@ import tkinter
 import customtkinter
 from CTkMessagebox import CTkMessagebox
 import os
+import random
 
 customtkinter.set_appearance_mode('light')
 customtkinter.set_default_color_theme('green')
@@ -44,14 +45,14 @@ class GUI(customtkinter.CTk):
         self.home_frame.pack()
 
         #create 2 buttons to give the user a choice how to proceed
-        pick_meal_btn = customtkinter.CTkButton(self.home_frame, 
+        get_meal_btn = customtkinter.CTkButton(self.home_frame, 
                                                 text="Get a random meal", 
-                                                command=self.log_meals, 
+                                                command=self.get_random_meal, 
                                                 font=('Facit', 18),
                                                 height=40,
                                                 width=175
                                                 )
-        pick_meal_btn.grid(column=0, row=1, padx=10)  
+        get_meal_btn.grid(column=0, row=1, padx=10)  
 
         add_new_btn = customtkinter.CTkButton(self.home_frame, 
                                               text='Add new meals', 
@@ -61,7 +62,36 @@ class GUI(customtkinter.CTk):
                                               width=175
                                               )                    
         add_new_btn.grid(column=1, row=1, padx=10)
-        
+    
+    def get_random_meal(self):
+        #Destroy previous buttons and instructions
+        self.instructions.destroy()
+        self.home_frame.destroy()
+        with open('saved_meals.txt', 'r') as file:
+            all_meals = file.readlines()
+            if len(all_meals) > 0:
+                self.meal_choice = customtkinter.CTkLabel(self,
+                                            text=f"Today you'll be making {random.choice(all_meals)}",
+                                            width=600,
+                                            height=100,
+                                            font=('Facit', 22),
+                                            bg_color=BG_COLOR,
+                                            wraplength=500)
+                self.meal_choice.pack(pady=(75,10))
+                self.bon_apetit = customtkinter.CTkLabel(self,
+                            text='Bon Apetit!',
+                            font=('Facit', 22),
+                            bg_color=BG_COLOR,
+                            wraplength=500)
+                self.bon_apetit.pack()
+                
+            #if there are no saved meals the user is directed to the log_meals screen
+            else:
+                self.log_meals()
+                print(random.choice(all_meals))
+
+
+
 
 
     def log_meals(self):
