@@ -10,34 +10,41 @@ class GUI(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.title('PickMEal')
-        self.geometry('1280x720')
-        self.config(pady=40)
-        self.grid_columnconfigure((0), weight=1)
+        self.geometry('720x480')
+        self.config(pady=60, background='ghost white')
+
 
         #create the main label
         self.greeting = customtkinter.CTkLabel(self, text='Welcome to PickMEal', 
-                                               anchor='center', font=('Facit', 65),
-                                               text_color='SpringGreen2')
-        self.greeting.grid(row=0, column=0, columnspan=1, padx=40, pady=5)
+                                               anchor='center', 
+                                               font=('Facit', 65),
+                                               text_color='SpringGreen2',
+                                               bg_color='ghost white')
+        self.greeting.pack()
 
         #create a label with a brief description
         self.description = customtkinter.CTkLabel(self, 
                                                    text='Your custom meal picker!',
-                                                   font=('Facit', 20))
-        self.description.grid(row=1, column=0, columnspan=1)
+                                                   font=('Facit', 20),
+                                                   bg_color='ghost white')
+        self.description.pack()
 
         #create an entry for new input
         self.new_meals = customtkinter.CTkEntry(self, width=500, placeholder_text='Enter one or multiple meals, separated by a comma')
-        self.new_meals.grid(row=2, column=0, columnspan=1, pady=20)
+        self.new_meals.pack(pady=40)
 
+
+        #create a frame for the two buttons
+        self.frame = customtkinter.CTkFrame(self, fg_color='ghost white')
+        self.frame.pack()
         #create a button to store the entry input
-        self.save_btn = customtkinter.CTkButton(self, text='Save', command=self.save_meals)
-        self.save_btn.grid(row=3,column=0, padx=20, pady=10)
+        self.save_btn = customtkinter.CTkButton(self.frame, text='Save', command=self.save_meals)
+        self.save_btn.grid(column=0, row=1, padx=20)
 
         #create a button to delete an existing meal from the saved_meals.txt
-        self.del_btn = customtkinter.CTkButton(self, text='Delete', command=self.del_meals)
-        self.del_btn.grid(row=3, column=1, padx=20, pady=10)
-    
+        self.del_btn = customtkinter.CTkButton(self.frame, text='Delete', command=self.del_meals)
+        self.del_btn.grid(column=1, row=1, padx=20)
+
     def save_meals(self):
         user_input = self.new_meals.get()
         if len(user_input) > 0:
