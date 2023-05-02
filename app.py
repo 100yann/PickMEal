@@ -1,5 +1,6 @@
 import tkinter
 import customtkinter
+from CTkMessagebox import CTkMessagebox
 import os
 
 customtkinter.set_appearance_mode('light')
@@ -42,12 +43,24 @@ class GUI(customtkinter.CTk):
         if len(user_input) > 0:
             with open('saved_meals.txt', 'a') as file:
                 file.write(f'{user_input}\n')
+        else:
+            CTkMessagebox(self, 
+                          width=300,
+                          title='Error', 
+                          message="You haven't added any meals.", 
+                          icon='warning',
+                          )
     
     def del_meals(self):
         try:
             os.startfile('saved_meals.txt')
         except FileNotFoundError:
-            pass
+            CTkMessagebox(self, 
+                          width=300,
+                          title='Error', 
+                          message='You have no saved meals!', 
+                          icon='cancel')
+            
 
 
 
