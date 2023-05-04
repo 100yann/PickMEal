@@ -88,7 +88,6 @@ class GUI(customtkinter.CTk):
             #if there are no saved meals the user is directed to the log_meals screen
             else:
                 self.log_meals()
-                print(random.choice(all_meals))
 
 
 
