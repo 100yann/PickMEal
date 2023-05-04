@@ -3,6 +3,7 @@ import customtkinter
 from CTkMessagebox import CTkMessagebox
 import os
 import random
+from PIL import Image
 
 customtkinter.set_appearance_mode('light')
 customtkinter.set_default_color_theme('green')
@@ -13,15 +14,15 @@ class GUI(customtkinter.CTk):
         super().__init__()
         self.title('PickMEal')
         self.geometry('720x480')
-        self.config(pady=60, background=BG_COLOR)
-
+        self.config(background=BG_COLOR)
+        
         #create the main label
         self.greeting = customtkinter.CTkLabel(self, text='Welcome to PickMEal', 
                                                anchor='center', 
                                                font=('Facit', 65),
                                                text_color='SpringGreen2',
                                                bg_color=BG_COLOR)
-        self.greeting.pack()
+        self.greeting.pack(pady=(50, 0))
 
         #create a label with a brief description
         self.description = customtkinter.CTkLabel(self, 
@@ -29,7 +30,18 @@ class GUI(customtkinter.CTk):
                                                    font=('Facit', 20),
                                                    bg_color=BG_COLOR)
         self.description.pack()
+        self.home_screen()
 
+
+
+    def home_screen(self):
+        #destroy previous screen if it exists
+        try:
+            self.instructions.destroy()
+            self.new_meals.destroy()
+            self.frame.destroy()
+        except:
+            pass
         #create a label with instructions   
         self.instructions = customtkinter.CTkLabel(self,
                                                    text='PickMEal allows you to keep a list of all meals you can cook and will return a random one so you no longer have to think about what you want to cook for dinner.',
@@ -106,7 +118,7 @@ class GUI(customtkinter.CTk):
                                                    font=('Facit', 18),
                                                    bg_color=BG_COLOR,
                                                    wraplength=500)
-        self.instructions.pack(pady=(70,0))
+        self.instructions.pack(pady=(50,0))
 
         #create an entry for new input
         self.new_meals = customtkinter.CTkEntry(self, width=500)
@@ -117,12 +129,17 @@ class GUI(customtkinter.CTk):
         self.frame.pack()
 
         #create a button to store the entry input
-        self.save_btn = customtkinter.CTkButton(self.frame, text='Save', command=self.save_meals)
+        self.save_btn = customtkinter.CTkButton(self.frame, text='Save', font=('Facit', 16), command=self.save_meals)
         self.save_btn.grid(column=0, row=1, padx=10)
 
         #create a button to delete an existing meal from the saved_meals.txt
-        self.del_btn = customtkinter.CTkButton(self.frame, text='Edit', command=self.del_meals)
+        self.del_btn = customtkinter.CTkButton(self.frame, text='Edit', font=('Facit', 16), command=self.del_meals)
         self.del_btn.grid(column=1, row=1, padx=10)
+
+        #create a button that allows the user to go back to the home page
+          
+        self.back_button = customtkinter.CTkButton(self.frame, text='Back', font=('Facit', 16), command=self.home_screen)
+        self.back_button.grid(column=2, row=1, padx=10)
 
     def save_meals(self):
         user_input = self.new_meals.get()
