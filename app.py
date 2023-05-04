@@ -3,7 +3,7 @@ import customtkinter
 from CTkMessagebox import CTkMessagebox
 import os
 import random
-from PIL import Image
+import time
 
 customtkinter.set_appearance_mode('light')
 customtkinter.set_default_color_theme('green')
@@ -99,6 +99,12 @@ class GUI(customtkinter.CTk):
                 
             #if there are no saved meals the user is directed to the log_meals screen
             else:
+                CTkMessagebox(self, 
+                          width=300,
+                          height=150,
+                          title='Error', 
+                          message="You haven't added any meals yet. You can add some here.", 
+                          )
                 self.log_meals()
 
 
