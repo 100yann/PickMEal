@@ -83,6 +83,7 @@ class GUI(customtkinter.CTk):
         add_new_btn.grid(column=1, row=1, padx=10)
     
     def get_random_meal(self):
+        
         #Destroy previous buttons and instructions
         self.instructions.destroy()
         self.home_frame.destroy()
@@ -189,12 +190,23 @@ class GUI(customtkinter.CTk):
         self.back_button.grid(column=2, row=1, padx=10)
 
     def save_meals(self):
+        #get user input 
         user_input = self.new_meals.get()
         if len(user_input) > 0:
-            with open('saved_meals.txt', 'a') as file:
+
+            #read the file storing all meals
+            with open('saved_meals.txt', 'r+') as file:
+                all_meals = file.read().splitlines()
                 for meal in user_input.split(','): 
-                    file.write(f'{meal.strip()}\n')
+
+                    #if the meal isn't already saved - save it
+                    if meal not in all_meals:
+                        file.write(f'{meal.strip()}\n')
+
+            #clear the entry
             self.new_meals.delete(0, len(user_input))
+            
+        #in case the user tries to save an empty entry
         else:
             CTkMessagebox(self, 
                           width=300,
