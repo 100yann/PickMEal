@@ -35,13 +35,20 @@ class GUI(customtkinter.CTk):
 
 
     def home_screen(self):
-        #destroy previous screen if it exists
+        #destroy d screen if it exists
         try:
+            self.frame.destroy()
             self.instructions.destroy()
             self.new_meals.destroy()
-            self.frame.destroy()
         except:
             pass
+
+        try:
+            self.meal_choice.destroy()
+            self.bon_apetit.destroy()
+        except:
+            pass
+
         #create a label with instructions   
         self.instructions = customtkinter.CTkLabel(self,
                                                    text='PickMEal allows you to keep a list of all meals you can cook and will return a random one so you no longer have to think about what you want to cook for dinner.',
@@ -79,33 +86,67 @@ class GUI(customtkinter.CTk):
         #Destroy previous buttons and instructions
         self.instructions.destroy()
         self.home_frame.destroy()
-        with open('saved_meals.txt', 'r') as file:
-            all_meals = file.readlines()
-            if len(all_meals) > 0:
-                self.meal_choice = customtkinter.CTkLabel(self,
-                                            text=f"Today you'll be making {random.choice(all_meals)}",
-                                            width=600,
-                                            height=100,
-                                            font=('Facit', 22),
-                                            bg_color=BG_COLOR,
-                                            wraplength=500)
-                self.meal_choice.pack(pady=(75,10))
-                self.bon_apetit = customtkinter.CTkLabel(self,
-                            text='Bon Apetit!',
-                            font=('Facit', 22),
-                            bg_color=BG_COLOR,
-                            wraplength=500)
-                self.bon_apetit.pack()
-                
-            #if there are no saved meals the user is directed to the log_meals screen
-            else:
-                CTkMessagebox(self, 
-                          width=300,
-                          height=150,
-                          title='Error', 
-                          message="You haven't added any meals yet. You can add some here.", 
-                          )
-                self.log_meals()
+        self.rerolls_left = 1
+        def print_meal():
+            try:
+                self.meal_choice.destroy()
+                self.frame.destroy()
+                self.bon_apetit.destroy()
+            except:
+                pass
+            with open('saved_meals.txt', 'r') as file:
+                all_meals = file.readlines()
+                if len(all_meals) > 0:
+                    self.meal_choice = customtkinter.CTkLabel(self,
+                                                text=f"Today you'll be making {random.choice(all_meals)}",
+                                                width=600,
+                                                height=100,
+                                                font=('Facit', 22),
+                                                bg_color=BG_COLOR,
+                                                wraplength=500)
+                    self.meal_choice.pack(pady=(75,10))                  
+                    
+                    self.bon_apetit = customtkinter.CTkLabel(self,
+                                                        text='Bon Apetit!',
+                                                        font=('Facit', 22),
+                                                        bg_color=BG_COLOR,
+                                                        wraplength=500)
+                    self.bon_apetit.pack()   
+
+                    #create a frame for the two buttons
+                    self.frame = customtkinter.CTkFrame(self, fg_color=BG_COLOR)
+                    self.frame.pack()
+
+                    #create a button that allows the user to reroll the meal
+                    self.reroll = customtkinter.CTkButton(self.frame, text=f'Reroll once', font=('Facit', 18), command=print_meal)
+                    self.reroll.grid(column=1, row=1, padx=10)
+
+
+                    if self.rerolls_left == 0:
+                        self.reroll.configure(state='disabled')
+
+
+                    #create a button that allows the user to go back to the home page
+                        
+                    self.back_button = customtkinter.CTkButton(self.frame, text='Back', font=('Facit', 18), command=self.home_screen)
+                    self.back_button.grid(column=2, row=1, padx=10) 
+                    
+                    self.rerolls_left -= 1
+
+                #if there are no saved meals the user is directed to the log_meals screen
+                else:
+                    CTkMessagebox(self, 
+                            width=300,
+                            height=150,
+                            title='Error', 
+                            message="You haven't added any meals yet. You can add some here.", 
+                            )
+                    self.log_meals()     
+
+        print_meal()  
+
+
+
 
 
 
@@ -153,6 +194,7 @@ class GUI(customtkinter.CTk):
             with open('saved_meals.txt', 'a') as file:
                 for meal in user_input.split(','): 
                     file.write(f'{meal.strip()}\n')
+            self.new_meals.delete(0, len(user_input))
         else:
             CTkMessagebox(self, 
                           width=300,
