@@ -15,6 +15,8 @@ class GUI(customtkinter.CTk):
         self.title('PickMEal')
         self.geometry('720x480')
         self.config(background=BG_COLOR)
+        self.resizable(False, False)
+        self.iconbitmap('images\program_icon.ico')
         
         #create the main label
         self.greeting = customtkinter.CTkLabel(self, text='Welcome to PickMEal', 
@@ -205,7 +207,7 @@ class GUI(customtkinter.CTk):
 
             #clear the entry
             self.new_meals.delete(0, len(user_input))
-            
+
         #in case the user tries to save an empty entry
         else:
             CTkMessagebox(self, 
