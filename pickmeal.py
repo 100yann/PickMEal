@@ -23,17 +23,14 @@ def main():
     while run:
         if print_recipes(recipes, ingredients, recipe_num):
             # Ask the user if they want to see another recipe.
-            retry = input('Would you like to see another recipe? yes/no').lower()
+            retry = input('\nWould you like to see another recipe? Yes/No ').strip().lower()
             if retry == 'yes':
                 os.system('cls')
                 recipe_num += 1
                 continue
             elif retry == 'no':
-                sys.exit('I\'m glad you liked the recipe. Bon Appetit!')
+                sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
                  # Exit if the user doesn't want to see more recipes.
-            else:
-                os.system('cls')
-                print('Invalid input, please retry')
         else:
             sys.exit('We\'re sorry, there are no more recipes found')
             # Exit if there are no more recipes to show.
@@ -77,18 +74,12 @@ def print_recipes(recipes, user_ing, n):
             # Return False if there are no more recipes to display.
         
         else:
-            have = []
-            for i in user_ing:
-                for phrase in recipe_ingredients:
-                    if i in phrase:
-                        # Add ingredients that the user has to the 'have' list.
-                        have.append(phrase)
-                        recipe_ingredients.remove(phrase)
-                        # Remove those ingredients from the recipe list.
-                    # i.replace("\\\\\\", '').replace('\\\\','')
+            print('', label, url, sep='\n')
+            print('\nIngredients you need:')
+            for i in recipe_ingredients:
+                print('-', i)
 
-            print("Ingredients you have:", have, sep='\n', end='\n\n')
-            print("Ingredients you need:", recipe_ingredients, sep='\n', end='\n\n')
+            print('\nFor instructions please visit the url.')
             return True
             # Return True to indicate that a recipe was successfully displayed.
 
