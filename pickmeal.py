@@ -2,6 +2,7 @@ import requests
 import sys
 import os
 
+
 def main():
     # Get a list of ingredients from the user.
     ingredients = user_ingredients()
