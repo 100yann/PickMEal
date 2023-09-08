@@ -22,19 +22,36 @@ def main():
 
     # Allow the user to browse recipes.
     while run:
-        if print_recipes(recipes, ingredients, recipe_num):
-            # Ask the user if they want to see another recipe.
+        try:
+            curr_recipe = recipes[recipe_num]
+
+        except IndexError:
+            sys.exit('\nWe\'re sorry, there are no more recipes found.')
+        
+        else:
+            title, url, recipe_ingredients = get_recipe_details(curr_recipe)
+            print('\n' + title)
+            print('\nIngredients you need:')
+            for i in recipe_ingredients:
+                print('-', i)
+            print('\nInstructions:', url)
+            
+        # Ask the user if they want to see another recipe.
+        valid = False
+        while not valid:
             retry = input('\nWould you like to see another recipe? Yes/No ').strip().lower()
             if retry == 'yes':
                 os.system('cls')
                 recipe_num += 1
+                valid = True
                 continue
+
             elif retry == 'no':
                 sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
-                 # Exit if the user doesn't want to see more recipes.
-        else:
-            sys.exit('We\'re sorry, there are no more recipes found')
-            # Exit if there are no more recipes to show.
+                # Exit if the user doesn't want to see more recipes.
+            
+            else:
+                print('Invalid input')
 
       
 # Function to get a list of ingredients from the user.
@@ -64,25 +81,19 @@ def get_recipes(ingredients):
 
 
 # Function to print details of a recipe.
-def print_recipes(recipes, user_ing, n):
+def get_recipe_details(recipe):
         try:
-            label = recipes[n]['recipe']['label']
-            url = recipes[n]['recipe']['url']
-            recipe_ingredients = recipes[n]['recipe']['ingredientLines']
+            label = recipe['recipe']['label']
+            url = recipe['recipe']['url']
+            recipe_ingredients = recipe['recipe']['ingredientLines']
 
         except IndexError:
-            return False 
-            # Return False if there are no more recipes to display.
+            return None, None, None
+            # Return None if there are no more recipes to display.
         
         else:
-            print('', label, url, sep='\n')
-            print('\nIngredients you need:')
-            for i in recipe_ingredients:
-                print('-', i)
-
-            print('\nFor instructions please visit the url.')
-            return True
-            # Return True to indicate that a recipe was successfully displayed.
+            return label, url, recipe_ingredients
+            # Return the recipe details.
 
 
 
