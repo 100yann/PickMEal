@@ -19,8 +19,8 @@ def main():
     # Initialize variables for recipe navigation.
     recipe_num = 0 
     run = True
-
     # Allow the user to browse recipes.
+    '''
     while run:
         if print_recipes(recipes, ingredients, recipe_num):
             # Ask the user if they want to see another recipe.
@@ -35,7 +35,7 @@ def main():
         else:
             sys.exit('We\'re sorry, there are no more recipes found')
             # Exit if there are no more recipes to show.
-
+    '''
       
 # Function to get a list of ingredients from the user.
 def user_ingredients():
@@ -47,40 +47,36 @@ def user_ingredients():
 
 # Function to fetch recipes from the Edamam API based on user ingredients.
 def get_recipes(ingredients):
-    ingredients_as_str = ','.join(ingredients)
     params = {
-        'type': 'public',
-        'q': ingredients_as_str,
-        'app_id': os.environ['edamam_app_id'], # Use Edamam API credentials stored in environment variables.
-        'app_key': os.environ['edamam_app_key'],
+        'apiKey': os.environ['spoon_key'],
+        'ingredients': ingredients,
+        'number': 5,
+        'instructionsRequired': True,
     }
 
-    response = requests.get('https://api.edamam.com/api/recipes/v2', params=params)
+    response = requests.get('https://api.spoonacular.com/recipes/complexSearch', params=params)
     if response.status_code == 200:
-        data = response.json()
-        hits = data.get('hits', []) # Extract recipe data from the API response.
-        return hits
+        data = response.json()['results']
+        return data
     return None
 
 
 # Function to print details of a recipe.
-def print_recipes(recipes, user_ing, n):
+def print_recipes(recipe, user_ing):
         try:
-            label = recipes[n]['recipe']['label']
-            url = recipes[n]['recipe']['url']
-            recipe_ingredients = recipes[n]['recipe']['ingredientLines']
-
+            title = recipe['title']
+            url = recipe['recipe']['url']
         except IndexError:
             return False 
             # Return False if there are no more recipes to display.
         
         else:
-            print('', label, url, sep='\n')
-            print('\nIngredients you need:')
-            for i in recipe_ingredients:
-                print('-', i)
+            # print('', title, url, sep='\n')
+            # print('\nIngredients you need:')
+            # for i in recipe_ingredients:
+            #     print('-', i)
 
-            print('\nFor instructions please visit the url.')
+            # print('\nFor instructions please visit the url.')
             return True
             # Return True to indicate that a recipe was successfully displayed.
 
