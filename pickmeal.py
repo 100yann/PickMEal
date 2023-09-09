@@ -1,6 +1,10 @@
 import requests
 import sys
 import os
+from fpdf import FPDF
+from io import BytesIO
+from PIL import Image
+import tempfile
 
 
 def main():
@@ -29,7 +33,7 @@ def main():
             sys.exit('\nWe\'re sorry, there are no more recipes found.')
         
         else:
-            title, url, recipe_ingredients = get_recipe_details(curr_recipe)
+            title, url, recipe_ingredients, img = get_recipe_details(curr_recipe)
             print('\n' + title)
             print('\nIngredients you need:')
             for i in recipe_ingredients:
@@ -47,6 +51,9 @@ def main():
                 continue
 
             elif retry == 'no':
+                make_pdf = input('\nWould you like to save the recipe as a pdf? Yes/No ').strip().lower()
+                if make_pdf == 'yes':
+                    export_pdf(title, url, img, recipe_ingredients)
                 sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
                 # Exit if the user doesn't want to see more recipes.
             
@@ -86,16 +93,40 @@ def get_recipe_details(recipe):
             label = recipe['recipe']['label']
             url = recipe['recipe']['url']
             recipe_ingredients = recipe['recipe']['ingredientLines']
-
+            img = recipe['recipe']['images']['REGULAR']['url']
         except IndexError:
-            return None, None, None
+            return None, None, None, None
             # Return None if there are no more recipes to display.
         
         else:
-            return label, url, recipe_ingredients
+            return label, url, recipe_ingredients, img
             # Return the recipe details.
 
 
+def export_pdf(recipe_title, url, img, ingredients):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font('Arial', size=22)
+    pdf.cell(190, 10, txt=recipe_title.title(), ln=2, align='C') # add title
+    
+    response = requests.get(img)
+    image_data = response.content
+
+    image = Image.open(BytesIO(image_data))
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
+        image.save(temp_file.name, 'JPEG')
+        pdf.image(temp_file.name, x=100, y=30, w=100)
+    
+    pdf.set_font('Arial', size=14)
+    pdf.multi_cell(80, 30, txt='Ingredients:', align='L')
+    
+    pdf.set_font('Arial', size=12)
+    for ing in ingredients:
+        pdf.multi_cell(80, 10, txt=f' - {ing}', align='L')
+
+    pdf_name = recipe_title.replace(' ','_') + '_recipe.pdf'
+    pdf.output(pdf_name)
+    os.remove(temp_file.name)
 
 if __name__ == '__main__':
     main()
