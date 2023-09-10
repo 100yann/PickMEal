@@ -30,15 +30,25 @@ def main():
     # Initialize variables for recipe navigation.
     recipe_num = 0 
     run = True
-
+    go_back = False
     # Allow the user to browse recipes.
     while run:
         try:
             curr_recipe = recipes[recipe_num]
 
         except IndexError:
-            sys.exit('\nWe\'re sorry, there are no more recipes found.')
-        
+            print('\nWe\'re sorry, there are no more recipes found.')
+            if yes_no_prompt('\nWould you like to go back?'):
+                if go_back:
+                    go_back = False
+                    recipe_num += 1
+                else:
+                    go_back = True
+                    recipe_num -= 1
+                continue
+            else:
+                sys.exit('Goodbye!')
+
         else:
             title, url, recipe_ingredients, img = get_recipe_details(curr_recipe)
             print('\n' + title)
@@ -51,7 +61,10 @@ def main():
         if not is_random:
             if yes_no_prompt('\nWould you like to see another recipe? Yes/No: ') and is_random == False:
                 os.system('cls')
-                recipe_num += 1
+                if go_back:
+                    recipe_num -= 1
+                else:
+                    recipe_num += 1
                 continue
 
 
