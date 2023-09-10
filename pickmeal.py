@@ -10,6 +10,7 @@ import tempfile
 def main():
     # Get a list of ingredients from the user.
     ingredients = user_ingredients()
+    is_random = False
     if ingredients == '':
         sys.exit('No ingredients entered') 
         # Exit the program if no ingredients were provided.
@@ -17,7 +18,7 @@ def main():
     elif ingredients == 'random':
         random_ingredients = get_random()
         recipes = get_recipes(random_ingredients)
-
+        is_random = True
     else:
         # Get recipes based on the user's ingredients.
         recipes = get_recipes(ingredients)
@@ -47,17 +48,18 @@ def main():
             print('\nInstructions:', url)
             
         # Ask the user if they want to see another recipe.
-            if yes_no_prompt('\nWould you like to see another recipe? Yes/No: '):
+        if not is_random:
+            if yes_no_prompt('\nWould you like to see another recipe? Yes/No: ') and is_random == False:
                 os.system('cls')
                 recipe_num += 1
                 continue
 
-            else:
-                if yes_no_prompt('\nWould you like to save the recipe as a pdf? Yes/No: '):
-                    export_pdf(title, url, img, recipe_ingredients)
 
-                sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
-                # Exit        
+        if yes_no_prompt('\nWould you like to save the recipe as a pdf? Yes/No: '):
+            export_pdf(title, url, img, recipe_ingredients)
+
+        sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
+        # Exit        
 
 
       
@@ -133,7 +135,7 @@ def export_pdf(recipe_title, url, img, ingredients):
         pdf.multi_cell(80, 5, txt=f' - {ing}', align='L')
 
     pdf.cell(190, 130, txt=f'Instructions: {url}', ln=1, align='C')
-    pdf_name = recipe_title.replace(' ','_') + '_recipe.pdf'
+    pdf_name = recipe_title.replace(' ','_').replace("'",'').replace('"','') + '_recipe.pdf'
     pdf.output(pdf_name)
     print(f'\nYour recipe was saved as {pdf_name}')
     os.remove(temp_file.name)
