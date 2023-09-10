@@ -41,24 +41,18 @@ def main():
             print('\nInstructions:', url)
             
         # Ask the user if they want to see another recipe.
-        valid = False
-        while not valid:
-            retry = input('\nWould you like to see another recipe? Yes/No ').strip().lower()
-            if retry == 'yes':
+            if yes_no_prompt('\nWould you like to see another recipe? Yes/No: '):
                 os.system('cls')
                 recipe_num += 1
-                valid = True
                 continue
 
-            elif retry == 'no':
-                make_pdf = input('\nWould you like to save the recipe as a pdf? Yes/No ').strip().lower()
-                if make_pdf == 'yes':
-                    export_pdf(title, url, img, recipe_ingredients)
-                sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
-                # Exit if the user doesn't want to see more recipes.
-            
             else:
-                print('Invalid input')
+                if yes_no_prompt('\nWould you like to save the recipe as a pdf? Yes/No: '):
+                    export_pdf(title, url, img, recipe_ingredients)
+
+                sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
+                # Exit        
+
 
       
 # Function to get a list of ingredients from the user.
@@ -101,6 +95,16 @@ def get_recipe_details(recipe):
         else:
             return label, url, recipe_ingredients, img
             # Return the recipe details.
+
+def yes_no_prompt(question):
+    while True:
+        user_response = input(question).strip().lower()
+        if user_response == 'yes':
+            return True
+        elif user_response == 'no':
+            return False
+        else:
+            print('Invalid input')
 
 
 def export_pdf(recipe_title, url, img, ingredients):
