@@ -1,0 +1,58 @@
+chicken
+bacon
+eggs
+potatoes
+tomatoes
+onions
+garlic
+bell peppers
+cheese
+pasta
+rice
+broccoli
+carrots
+spinach
+mushrooms
+avocado
+lettuce
+beef
+pork
+shrimp
+salmon
+lemons
+limes
+cilantro
+parsley
+oregano
+basil
+thyme
+cumin
+paprika
+salt
+pepper
+olive oil
+butter
+sugar
+flour
+milk
+cream
+sour cream
+yogurt
+honey
+soy sauce
+vinegar
+ketchup
+mustard
+mayonnaise
+sriracha
+barbecue sauce
+chili powder
+hot sauce
+black beans
+kidney beans
+corn
+bell pepper
+jalapenos
+salsa
+tortillas
+bread

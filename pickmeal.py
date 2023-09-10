@@ -10,12 +10,18 @@ import tempfile
 def main():
     # Get a list of ingredients from the user.
     ingredients = user_ingredients()
-    if not ingredients:
+    if ingredients == '':
         sys.exit('No ingredients entered') 
         # Exit the program if no ingredients were provided.
 
-    # Get recipes based on the user's ingredients.
-    recipes = get_recipes(ingredients)
+    elif ingredients == 'random':
+        random_ingredients = get_random()
+        recipes = get_recipes(random_ingredients)
+
+    else:
+        # Get recipes based on the user's ingredients.
+        recipes = get_recipes(ingredients)
+
     if not recipes:
         sys.exit('''No results found. Please try again with different ingredients.''')
         # Exit if no recipes were found.
@@ -57,18 +63,15 @@ def main():
       
 # Function to get a list of ingredients from the user.
 def user_ingredients():
-    user_choice = input("Enter a list of ingredients you have:\n").lower().split(',')
-    if user_choice != '':
-        return user_choice
-    return None
+    user_choice = input("Enter a list of ingredients you have:\n").lower()
+    return user_choice
 
 
 # Function to fetch recipes from the Edamam API based on user ingredients.
 def get_recipes(ingredients):
-    ingredients_as_str = ','.join(ingredients)
     params = {
         'type': 'public',
-        'q': ingredients_as_str,
+        'q': ingredients,
         'app_id': os.environ['edamam_app_id'], # Use Edamam API credentials stored in environment variables.
         'app_key': os.environ['edamam_app_key'],
     }
@@ -81,7 +84,7 @@ def get_recipes(ingredients):
     return None
 
 
-# Function to print details of a recipe.
+# Function to return details of a recipe.
 def get_recipe_details(recipe):
         try:
             label = recipe['recipe']['label']
@@ -95,6 +98,7 @@ def get_recipe_details(recipe):
         else:
             return label, url, recipe_ingredients, img
             # Return the recipe details.
+
 
 def yes_no_prompt(question):
     while True:
@@ -126,11 +130,29 @@ def export_pdf(recipe_title, url, img, ingredients):
     
     pdf.set_font('Arial', size=12)
     for ing in ingredients:
-        pdf.multi_cell(80, 10, txt=f' - {ing}', align='L')
+        pdf.multi_cell(80, 5, txt=f' - {ing}', align='L')
 
+    pdf.cell(190, 130, txt=f'Instructions: {url}', ln=1, align='C')
     pdf_name = recipe_title.replace(' ','_') + '_recipe.pdf'
     pdf.output(pdf_name)
+    print(f'\nYour recipe was saved as {pdf_name}')
     os.remove(temp_file.name)
 
+
+def get_random():
+    import random
+    num_of_ingredients = random.randint(1, 5)
+    random_ingredients = []
+
+    with open('random_ingredients.txt') as file:
+        all_ingredients = file.readlines()
+        for _ in range(num_of_ingredients):
+            random_ingredients.append(random.choice(all_ingredients).strip())
+    
+    return random_ingredients
+
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\nProgram closed')
