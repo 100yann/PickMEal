@@ -36,12 +36,7 @@ def main():
         curr_recipe = recipes[recipe_num]
 
         title, url, recipe_ingredients, img = get_recipe_details(curr_recipe)
-        print('\n' + title)
-        print('\nIngredients you need:')
-        for i in recipe_ingredients:
-            print('-', i)
-        print('\nInstructions:', url)
-            
+        display_recipe(title, url, recipe_ingredients, img)
         # Ask the user if they want to see another recipe.
         if not is_random:
             if recipe_num == 0:
@@ -111,6 +106,14 @@ def get_recipe_details(recipe):
         else:
             return label, url, recipe_ingredients, img
             # Return the recipe details.
+
+
+def display_recipe(title, url, recipe_ingredients, img):
+    print('\n' + title)
+    print('\nIngredients you need:')
+    for i in recipe_ingredients:
+        print('-', i)
+    print('\nInstructions:', url)
 
 
 def yes_no_prompt(question, valid_answers):
