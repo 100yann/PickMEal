@@ -30,47 +30,45 @@ def main():
     # Initialize variables for recipe navigation.
     recipe_num = 0 
     run = True
-    go_back = False
+
     # Allow the user to browse recipes.
     while run:
-        try:
-            curr_recipe = recipes[recipe_num]
+        curr_recipe = recipes[recipe_num]
 
-        except IndexError:
-            print('\nWe\'re sorry, there are no more recipes found.')
-            if yes_no_prompt('\nWould you like to go back?'):
-                if go_back:
-                    go_back = False
-                    recipe_num += 1
-                else:
-                    go_back = True
-                    recipe_num -= 1
-                continue
-            else:
-                sys.exit('Goodbye!')
-
-        else:
-            title, url, recipe_ingredients, img = get_recipe_details(curr_recipe)
-            print('\n' + title)
-            print('\nIngredients you need:')
-            for i in recipe_ingredients:
-                print('-', i)
-            print('\nInstructions:', url)
+        title, url, recipe_ingredients, img = get_recipe_details(curr_recipe)
+        print('\n' + title)
+        print('\nIngredients you need:')
+        for i in recipe_ingredients:
+            print('-', i)
+        print('\nInstructions:', url)
             
         # Ask the user if they want to see another recipe.
         if not is_random:
-            if yes_no_prompt('\nWould you like to see another recipe? Yes/No: ') and is_random == False:
-                os.system('cls')
-                if go_back:
-                    recipe_num -= 1
-                else:
-                    recipe_num += 1
+            if recipe_num == 0:
+                user_prompt_recipes = yes_no_prompt('\nWould you like to see another recipe? Next/No: ',
+                                                valid_answers=['next', 'no'])
+            elif recipe_num == len(recipes) - 1:
+                user_prompt_recipes = yes_no_prompt('\nThis was the last recipe. Would you like to go back? Back/No: ',
+                                                valid_answers=['back', 'no'])
+            else:
+                user_prompt_recipes = yes_no_prompt('\nWould you like to see another recipe? Next/Back/No: ',
+                                                    valid_answers=['next', 'back', 'no'])
+            
+            if user_prompt_recipes == 'next':
+                recipe_num += 1
                 continue
+            elif user_prompt_recipes == 'back':
+                recipe_num -= 1
+                continue
+            
 
-
-        if yes_no_prompt('\nWould you like to save the recipe as a pdf? Yes/No: '):
+        user_prompt_pdf = yes_no_prompt('\nWould you like to save the recipe as a pdf? Yes/No: ', 
+                         valid_answers=['yes', 'no'])
+        
+        if user_prompt_pdf == 'yes':
             export_pdf(title, url, img, recipe_ingredients)
-
+            # Save the recipe as a pdf if user writes yes
+        
         sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
         # Exit        
 
@@ -106,7 +104,7 @@ def get_recipe_details(recipe):
             url = recipe['recipe']['url']
             recipe_ingredients = recipe['recipe']['ingredientLines']
             img = recipe['recipe']['images']['REGULAR']['url']
-        except IndexError:
+        except KeyError:
             return None, None, None, None
             # Return None if there are no more recipes to display.
         
@@ -115,15 +113,13 @@ def get_recipe_details(recipe):
             # Return the recipe details.
 
 
-def yes_no_prompt(question):
+def yes_no_prompt(question, valid_answers):
     while True:
         user_response = input(question).strip().lower()
-        if user_response == 'yes':
-            return True
-        elif user_response == 'no':
-            return False
-        else:
+        if user_response not in valid_answers:
             print('Invalid input')
+        else:
+            return user_response
 
 
 def export_pdf(recipe_title, url, img, ingredients):
@@ -148,7 +144,12 @@ def export_pdf(recipe_title, url, img, ingredients):
         pdf.multi_cell(80, 5, txt=f' - {ing}', align='L')
 
     pdf.cell(190, 130, txt=f'Instructions: {url}', ln=1, align='C')
-    pdf_name = recipe_title.replace(' ','_').replace("'",'').replace('"','') + '_recipe.pdf'
+    forbidden_characters = ['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '.', ',']
+    
+    pdf_name = recipe_title
+    for i in forbidden_characters:
+        pdf_name = pdf_name.replace(i, '')
+    pdf_name = pdf_name.replace(' ','_') + '_recipe.pdf'
     pdf.output(pdf_name)
     print(f'\nYour recipe was saved as {pdf_name}')
     os.remove(temp_file.name)
@@ -167,6 +168,11 @@ def get_random():
     return random_ingredients
 
 if __name__ == '__main__':
+    # Check for the existence of environment variables
+    if 'edamam_app_id' not in os.environ or 'edamam_app_key' not in os.environ:
+        print("Error: 'edamam_app_id' and 'edamam_app_key' environment variables are not set.")
+        print("Please set these environment variables with your Edamam API credentials.")
+        exit(1)  # Exit the program with an error code
     try:
         main()
     except KeyboardInterrupt:
