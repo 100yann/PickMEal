@@ -36,7 +36,7 @@ def main():
         curr_recipe = recipes[recipe_num]
 
         title, url, recipe_ingredients, img = get_recipe_details(curr_recipe)
-        display_recipe(title, url, recipe_ingredients, img)
+        display_recipe(title, url, recipe_ingredients)
         # Ask the user if they want to see another recipe.
         if not is_random:
             if recipe_num == 0:
@@ -99,7 +99,7 @@ def get_recipe_details(recipe):
             url = recipe['recipe']['url']
             recipe_ingredients = recipe['recipe']['ingredientLines']
             img = recipe['recipe']['images']['REGULAR']['url']
-        except KeyError:
+        except (KeyError, TypeError) as e:
             return None, None, None, None
             # Return None if there are no more recipes to display.
         
@@ -108,7 +108,7 @@ def get_recipe_details(recipe):
             # Return the recipe details.
 
 
-def display_recipe(title, url, recipe_ingredients, img):
+def display_recipe(title, url, recipe_ingredients):
     print('\n' + title)
     print('\nIngredients you need:')
     for i in recipe_ingredients:
