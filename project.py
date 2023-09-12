@@ -5,9 +5,11 @@ from fpdf import FPDF
 from io import BytesIO
 from PIL import Image
 import tempfile
+from pyfiglet import Figlet
 
 
 def main():
+    start()
     # Get a list of ingredients from the user.
     ingredients = user_ingredients()
     is_random = False
@@ -67,7 +69,10 @@ def main():
         sys.exit('\nWe\'re glad you liked the recipe. Bon Appetit!')
         # Exit        
 
-
+def start():
+    print('\nWelcome to')
+    f = Figlet(font='big')
+    print(f.renderText('PickMEal'))
       
 # Function to get a list of ingredients from the user.
 def user_ingredients():
