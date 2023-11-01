@@ -36,7 +36,11 @@ def index(request):
         with open(json_file_path, 'r') as file:
             recipes = json.load(file)
 
-        results = [{'title': item['title'], 'image': item['image'], 'missed_ingredients': item['missedIngredients']} for item in recipes]
-        print(results)
-        # return render(request, 'results.html', context=results)
+        results = [{'title': item['title'], 
+                    'image': item['image'], 
+                    'missing_ings': [ingredient['name'] for ingredient in item['missedIngredients']]
+                    } for item in recipes]
+        return render(request, 'results.html', context={
+            'results': results
+            })
     return render(request, 'index.html')
