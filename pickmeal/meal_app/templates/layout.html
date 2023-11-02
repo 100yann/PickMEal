@@ -26,8 +26,21 @@
             <li class="nav-item">
               <a class="nav-link" href="#">Pricing</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Sign Up</a>
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="#"><b>{{ user }}</b></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+              </li>
+              {% else %}
+              <li class="nav-item"> 
+                <a class="nav-link" href="{% url 'login' %}">Log In</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'register' %}">Register</a>
+              </li>
+              {% endif %}
             </li>
           </ul>
         </div>

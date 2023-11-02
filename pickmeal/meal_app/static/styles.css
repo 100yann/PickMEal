@@ -2,6 +2,14 @@ body{
     height: 1080px;
     overflow: hidden;
 }
+.errorlist {
+    padding: 0;
+}
+.error, .errorlist li {
+    list-style: none;
+    color: red;
+}
+
 .page-heading, .meal-search{
     text-align: center;
 }
