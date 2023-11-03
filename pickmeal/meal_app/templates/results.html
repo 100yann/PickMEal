@@ -4,22 +4,38 @@
 
 {% block body %}
     <div class="container">
-        {% for result in results %}
-            <div class="row">
-                <div class="col-lg-4 col-sm-12">
-                    <img src="{{ result.image }}" alt="recipe-image">
-                </div>
-                <div class="col-lg-6 col-sm-12">
+        {% for title, result in results.items %}
+        <div class="row">
+            <div class="col-lg-4 col-sm-12">
+                <img src="{{ result.image }}" alt="recipe-image">
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <div class="recipe-card-title">
                     <h3>{{ result.title }}</h3>
-                    Missing Ingredients:
-                    <ul>
-                        {% for ingredient in result.missing_ings %}
-                        <li>{{ ingredient }}</li>
-                        {% endfor %}
-                    </ul>
+                </div>
+                <div id="recipe-card-ings">
+                    <div>
+                        Available Ingredients ({{ result.num_used_ings }}):
+                        <ul>
+                            {% for ing in result.used_ings %}
+                                <li>{{ ing }}</li>
+                            {% endfor %}  
+                        </ul>                        
+                    </div>
+                    <div id="needed-ings">
+                        Needed Ingredients ({{ result.num_missing_ings }}):
+                        <ul>
+                            {% for ing in result.missing_ings %}
+                                <li>{{ ing }}</li>
+                            {% endfor %}
+                        </ul>                        
+                    </div>
+
                 </div>
 
+
             </div>
+        </div>   
         {% endfor %}
     </div>
 

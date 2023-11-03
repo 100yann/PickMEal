@@ -1,7 +1,7 @@
 body{
     height: 1080px;
-    overflow: hidden;
 }
+
 .errorlist {
     padding: 0;
 }
@@ -53,5 +53,23 @@ body{
 .row {
     background-color: rgb(214, 255, 214);
     border-radius: 25px;
-    margin-bottom: 10px;
+    margin-bottom: 10px;    
 }
+
+.recipe-card-title{
+    display: block;
+    text-wrap: wrap;
+    word-wrap: normal;
+    height: fit-content;
+    margin: 10px 0 20px;
+}
+
+#recipe-card-ings{
+    display: flex;
+    justify-content: space-between;
+}
+#needed-ings{
+    width: 50%;
+    word-wrap: normal;
+}
+

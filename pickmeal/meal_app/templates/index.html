@@ -9,7 +9,7 @@
         <h5>Your personal cooking assistant!</h5> 
     </div>
     <div class="search-div">
-        <form action="" method="POST">
+        <form action="{% url 'recipe_results' %}" method="POST">
             {% csrf_token %}
             <label id='recipe-label' for="recipe-search">Enter a list of ingredients you currently have</label>
             <input name='recipe-search' id='recipe-search' type="text" class="form-control" placeholder="Ingredients">
