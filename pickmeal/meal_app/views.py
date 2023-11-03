@@ -29,17 +29,15 @@ def getRecipes(ingredients):
         return None
     
     data = response.json()
-    recipe_ids = ''
     results = {}
     for recipe in data:
         id = recipe['id']
-        recipe_ids += f'{id},'
         title = recipe['title'].title()
         image = recipe['image']
         num_used_ingredients = recipe['usedIngredientCount']
         num_missing_ingredients = recipe['missedIngredientCount']
-        missing_ingredients = [j['name'].title() for j in recipe['missedIngredients']]
-        used_ingredients = [j['name'].title() for j in recipe['usedIngredients']]
+        missing_ingredients = [j['name'].capitalize() for j in recipe['missedIngredients']]
+        used_ingredients = [j['name'].capitalize() for j in recipe['usedIngredients']]
         results[title] = {
             'id': id,
             'title': title,
@@ -61,7 +59,16 @@ def recipeInformation(recipe_id):
     try:
         response = requests.get(url, params=params)
         if response.status_code == 200:
-            return json.loads(response.text)
+            data = response.json()
+            recipe_data = {
+                'title': data['title'],
+                'image': data['image'],
+                'servings': data['servings'],
+                'summary': data['summary'],
+                'instructions': data['instructions'].split('.'),
+                'ingredients': [ing['originalName'] for ing in data['extendedIngredients']]
+                }
+            return recipe_data
     except requests.exceptions.RequestException as e:
         print(f"Request error: {e}")
         return None
@@ -138,8 +145,11 @@ def results(request):
         return render(request, 'results.html', context={
             'results': recipes
             })
+    
+
 def recipe(request, recipe_id):
     
     # get recipe details
-    print(recipeInformation(recipe_id))
-    return render(request, 'view_recipe.html', {})
+    recipe_data = recipeInformation(recipe_id)
+    print(recipe_data)
+    return render(request, 'view_recipe.html', recipe_data)

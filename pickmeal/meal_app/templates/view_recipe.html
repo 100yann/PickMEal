@@ -2,5 +2,27 @@
 {% block title %}Recipe Name {% endblock %}
 
 {% block body %}
-Recipe
+<div class="container">
+    <img src="{{ image }}" alt="">
+
+    <h1>{{ title }}</h1>
+    <p>{{ summary|safe }}</p>
+    <p>Servings: {{ servings }}</p>
+    Ingredients:
+    <ul>
+        {% for ing in ingredients %}
+        <li>{{ing}}</li>
+        {% endfor %}
+    </ul>
+    Instructions:
+    <ul>
+        {% for instr in instructions %}
+            <li>{{ instr }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+
+
 {% endblock %}
