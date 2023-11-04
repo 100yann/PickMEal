@@ -7,6 +7,18 @@ window.addEventListener('DOMContentLoaded', () => {
         console.log(isSaved)
         saveRecipe(isSaved, csrfToken, saveRecipeButton)
     })
+
+    const ratingButtons = document.querySelectorAll('.fa-burger')
+    ratingButtons.forEach((element, index1) => {
+        element.onclick = () =>
+        ratingButtons.forEach((element, index2) => {
+            if (index1 >= index2){
+                element.classList.add('active')
+            } else {
+                element.classList.remove('active')
+            }
+        })
+    })
 })
 
 function saveRecipe(isSaved, csrfToken, button){

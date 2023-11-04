@@ -72,4 +72,16 @@ body{
     width: 50%;
     word-wrap: normal;
 }
-
+.rating{
+    margin-top: 10px;
+    background-color: rgb(66, 66, 66);
+    width: fit-content;
+    padding: 15px;
+    border-radius: 25px;
+}
+.fa-burger{
+    color: white;
+}
+.active {
+    color: yellow;
+}
