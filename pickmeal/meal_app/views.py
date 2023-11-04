@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.conf import settings
 import requests
 import json
@@ -17,7 +17,7 @@ def getRecipes(ingredients):
     'apiKey': api_key,
     'ingredients': ingredients, 
     'ranking': 1,
-    'number': 10
+    'number': 5
     }
 
 
@@ -66,16 +66,17 @@ def recipeInformation(recipe_id):
             fields = {
                 'instructions': '',
                 'Instructions': '',
-                '\n\n': ''
+                '\n\n': '',
             }
             for key, value in fields.items():
                 instructions = instructions.replace(key, value)
             
             # make the instructions into an ordered list if they aren't already
-            if '<ol>' not in instructions:
+            if '<ol>' not in instructions and '<p>' not in instructions:
                 instructions = "<ol><li>" + instructions.replace("\n", "</li><li>") + "</li></ol>"
-                
+
             recipe_data = {
+                'id': recipe_id,
                 'title': data['title'],
                 'image': data['image'],
                 'servings': data['servings'],
@@ -148,15 +149,11 @@ def results(request):
         data = request.POST
         ingredients = data.get('recipe-search')
         recipes = getRecipes(ingredients)
-        # recipes= {'Goat Cheese Pesto Pizza': {'id': 644953, 'title': 'Goat Cheese Pesto Pizza', 'image': 'https://spoonacular.com/recipeImages/644953-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 2, 'missing_ings': ['Pizza Shell', 'Goat Cheese'], 'used_ings': ['Pesto', 'Tomatoes']}, 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry': {'id': 640513, 'title': 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry', 'image': 'https://spoonacular.com/recipeImages/640513-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 3, 'missing_ings': ['Block Of Cream Cheese', 'Regular Crescents From The Section Of The Grocery', 'Egg - Beat'], 'used_ings': ['Pesto', 'Sundried Tomatoes']}, 'Pesto Fresh Caprese Sandwich': {'id': 655822, 'title': 'Pesto Fresh Caprese Sandwich', 'image': 'https://spoonacular.com/recipeImages/655822-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 4, 'missing_ings': ['Balsamic Vinegar', 'Ciabatta Roll', 'Basil Leaves', 'Mozzarella'], 'used_ings': ['Basil Pesto', 'Tomato']}}
+        recipes= {'Goat Cheese Pesto Pizza': {'id': 644953, 'title': 'Goat Cheese Pesto Pizza', 'image': 'https://spoonacular.com/recipeImages/644953-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 2, 'missing_ings': ['Pizza Shell', 'Goat Cheese'], 'used_ings': ['Pesto', 'Tomatoes']}, 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry': {'id': 640513, 'title': 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry', 'image': 'https://spoonacular.com/recipeImages/640513-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 3, 'missing_ings': ['Block Of Cream Cheese', 'Regular Crescents From The Section Of The Grocery', 'Egg - Beat'], 'used_ings': ['Pesto', 'Sundried Tomatoes']}, 'Pesto Fresh Caprese Sandwich': {'id': 655822, 'title': 'Pesto Fresh Caprese Sandwich', 'image': 'https://spoonacular.com/recipeImages/655822-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 4, 'missing_ings': ['Balsamic Vinegar', 'Ciabatta Roll', 'Basil Leaves', 'Mozzarella'], 'used_ings': ['Basil Pesto', 'Tomato']}}
         
         if not recipes:
             # handle error
             ...
-        # json_file_path = os.path.join(settings.BASE_DIR, 'meal_app/static', 'working_data.json')
-
-        # with open(json_file_path, 'r') as file:
-        #     recipes = json.load(file)
 
         return render(request, 'results.html', context={
             'results': recipes
@@ -164,8 +161,21 @@ def results(request):
     
 
 def recipe(request, recipe_id):
-    
+    user = User.objects.get(pk=request.user.id)
+    if request.method == 'POST':
+        is_saved = json.loads(request.body).get('status')
+        if is_saved == 'false':
+            user.add_recipe(recipe_id)
+        elif is_saved == 'true':
+            user.remove_recipe(recipe_id)
+        
+        return HttpResponse()
     # get recipe details
+    user_recipes = user.get_recipes()
+    if recipe_id in user_recipes:
+        recipe_saved = True
+    else:
+        recipe_saved = False
     recipe_data = recipeInformation(recipe_id)
-    print(recipe_data)
+    recipe_data['recipe_saved'] = recipe_saved
     return render(request, 'view_recipe.html', recipe_data)

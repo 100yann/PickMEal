@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
-{% block title %}Recipe Name {% endblock %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
 <div class="container">
@@ -15,14 +17,25 @@
         {% endfor %}
     </ul>
     Instructions:
-    <ul>{{ instructions|safe }}
-        <!-- {% for instr in instructions %}
-            <li>{{ instr }}</li>
-        {% endfor %} -->
-    </ul>
+    {{ instructions|safe }}
+    
+
+
+    {% if user.is_authenticated %}
+        {% csrf_token %}
+        {% if recipe_saved %}
+            <button class="btn btn-primary" id="save-recipe" data-saved="true"><i class="fa-solid fa-bookmark fa-lg mr-3"></i>Recipe Saved</button>
+        {% else %}
+            <button class="btn btn-primary" id="save-recipe" data-saved="false"><i class="fa-regular fa-bookmark fa-lg mr-3"></i>Save Recipe</button>
+        {% endif %}
+    {% else %}
+        <h6>Log in to save and rate this recipe!</h6>
+    {% endif %}
 </div>
 
+{% endblock %}
 
-
-
+{% block scripts %}
+<script src="{% static 'view-recipe.js' %}"></script>
+<script src="https://kit.fontawesome.com/b1fbfefaf0.js" crossorigin="anonymous"></script>
 {% endblock %}
