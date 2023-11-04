@@ -15,10 +15,10 @@
         {% endfor %}
     </ul>
     Instructions:
-    <ul>
-        {% for instr in instructions %}
+    <ul>{{ instructions|safe }}
+        <!-- {% for instr in instructions %}
             <li>{{ instr }}</li>
-        {% endfor %}
+        {% endfor %} -->
     </ul>
 </div>
 

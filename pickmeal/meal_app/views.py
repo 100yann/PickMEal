@@ -17,7 +17,7 @@ def getRecipes(ingredients):
     'apiKey': api_key,
     'ingredients': ingredients, 
     'ranking': 1,
-    'number': 3
+    'number': 10
     }
 
 
@@ -60,13 +60,29 @@ def recipeInformation(recipe_id):
         response = requests.get(url, params=params)
         if response.status_code == 200:
             data = response.json()
+            
+            # format instructions
+            instructions = data['instructions']
+            fields = {
+                'instructions': '',
+                'Instructions': '',
+                '\n\n': ''
+            }
+            for key, value in fields.items():
+                instructions = instructions.replace(key, value)
+            
+            # make the instructions into an ordered list if they aren't already
+            if '<ol>' not in instructions:
+                instructions = "<ol><li>" + instructions.replace("\n", "</li><li>") + "</li></ol>"
+                
             recipe_data = {
                 'title': data['title'],
                 'image': data['image'],
                 'servings': data['servings'],
                 'summary': data['summary'],
-                'instructions': data['instructions'].split('.'),
-                'ingredients': [ing['originalName'] for ing in data['extendedIngredients']]
+                'instructions': instructions,
+                # sometimes the API returns duplicate ingredients so ingredients is now a set instead of list
+                'ingredients': set(ing['originalName'].capitalize() for ing in data['extendedIngredients'])
                 }
             return recipe_data
     except requests.exceptions.RequestException as e:
@@ -131,8 +147,8 @@ def results(request):
     if request.method == 'POST':
         data = request.POST
         ingredients = data.get('recipe-search')
-        # recipes = getRecipes(ingredients)
-        recipes= {'Goat Cheese Pesto Pizza': {'id': 644953, 'title': 'Goat Cheese Pesto Pizza', 'image': 'https://spoonacular.com/recipeImages/644953-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 2, 'missing_ings': ['Pizza Shell', 'Goat Cheese'], 'used_ings': ['Pesto', 'Tomatoes']}, 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry': {'id': 640513, 'title': 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry', 'image': 'https://spoonacular.com/recipeImages/640513-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 3, 'missing_ings': ['Block Of Cream Cheese', 'Regular Crescents From The Section Of The Grocery', 'Egg - Beat'], 'used_ings': ['Pesto', 'Sundried Tomatoes']}, 'Pesto Fresh Caprese Sandwich': {'id': 655822, 'title': 'Pesto Fresh Caprese Sandwich', 'image': 'https://spoonacular.com/recipeImages/655822-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 4, 'missing_ings': ['Balsamic Vinegar', 'Ciabatta Roll', 'Basil Leaves', 'Mozzarella'], 'used_ings': ['Basil Pesto', 'Tomato']}}
+        recipes = getRecipes(ingredients)
+        # recipes= {'Goat Cheese Pesto Pizza': {'id': 644953, 'title': 'Goat Cheese Pesto Pizza', 'image': 'https://spoonacular.com/recipeImages/644953-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 2, 'missing_ings': ['Pizza Shell', 'Goat Cheese'], 'used_ings': ['Pesto', 'Tomatoes']}, 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry': {'id': 640513, 'title': 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry', 'image': 'https://spoonacular.com/recipeImages/640513-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 3, 'missing_ings': ['Block Of Cream Cheese', 'Regular Crescents From The Section Of The Grocery', 'Egg - Beat'], 'used_ings': ['Pesto', 'Sundried Tomatoes']}, 'Pesto Fresh Caprese Sandwich': {'id': 655822, 'title': 'Pesto Fresh Caprese Sandwich', 'image': 'https://spoonacular.com/recipeImages/655822-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 4, 'missing_ings': ['Balsamic Vinegar', 'Ciabatta Roll', 'Basil Leaves', 'Mozzarella'], 'used_ings': ['Basil Pesto', 'Tomato']}}
         
         if not recipes:
             # handle error
