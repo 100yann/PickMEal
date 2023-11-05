@@ -3,7 +3,7 @@ from django.conf import settings
 import requests
 import json
 import os
-from .models import User, RegisterUser
+from .models import User, RegisterUser, Recipe, Rating
 from django.contrib.auth import authenticate, login, logout
 
 
@@ -160,22 +160,24 @@ def results(request):
             })
     
 
-def recipe(request, recipe_id):
+def recipe(request, recipe_title, recipe_id):
     user = User.objects.get(pk=request.user.id)
+    recipe, created = Recipe.objects.get_or_create(id=recipe_id, title=recipe_title)
+
     if request.method == 'POST':
         is_saved = json.loads(request.body).get('status')
         if is_saved == 'false':
-            user.add_recipe(recipe_id)
+            user.saved_recipes.add(recipe.pk)
         elif is_saved == 'true':
-            user.remove_recipe(recipe_id)
-        
+            user.saved_recipes.remove(recipe.pk)
         return HttpResponse()
-    # get recipe details
-    user_recipes = user.get_recipes()
-    if recipe_id in user_recipes:
+    
+    if user.saved_recipes.filter(id=recipe_id).exists():
         recipe_saved = True
     else:
         recipe_saved = False
+
+    # get recipe details
     recipe_data = recipeInformation(recipe_id)
     recipe_data['recipe_saved'] = recipe_saved
     return render(request, 'view_recipe.html', recipe_data)

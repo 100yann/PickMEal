@@ -5,22 +5,26 @@ import json
 # Create your models here.
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    saved_recipes = models.JSONField(default=list, blank=True)
+    saved_recipes = models.ManyToManyField('Recipe', related_name='users_who_saved')
 
-    def add_recipe(self, recipe_id):
-        self.saved_recipes.append(recipe_id)
-        self.save()
-
-    def remove_recipe(self, recipe_id):
-        if recipe_id in self.saved_recipes:
-            self.saved_recipes.remove(recipe_id)
-            self.save()
     
     def get_recipes(self):
         return self.saved_recipes
 
     def __str__(self) -> str:
-        return f'Username: {self.username}\nSaved recipes: {self.saved_recipes}'
+        return self.username
+    
+
+class Recipe(models.Model):
+    id = models.IntegerField(primary_key=True)
+    title = models.CharField(max_length=255)
+    
+class Rating(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    rated_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 class RegisterUser(forms.ModelForm):
     class Meta:
         model = User
