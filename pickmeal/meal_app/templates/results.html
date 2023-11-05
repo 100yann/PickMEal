@@ -33,7 +33,11 @@
                             </div>
 
                         </div>
-
+                    {% if result.avg_rating %}
+                        <p>Average rating: <span id="rating">{{ result.avg_rating}}</span></p>
+                    {% else %}
+                        <p>No user ratings available</p>
+                    {% endif %}
 
                     </div>
                 </div>  
