@@ -165,19 +165,48 @@ def recipe(request, recipe_title, recipe_id):
     recipe, created = Recipe.objects.get_or_create(id=recipe_id, title=recipe_title)
 
     if request.method == 'POST':
-        is_saved = json.loads(request.body).get('status')
-        if is_saved == 'false':
-            user.saved_recipes.add(recipe.pk)
-        elif is_saved == 'true':
-            user.saved_recipes.remove(recipe.pk)
-        return HttpResponse()
-    
+        data = json.loads(request.body)
+        # handle requests that pass if save recipe data
+        if 'status' in data:
+            is_saved = data.get('status')
+            if is_saved == 'false':
+                user.saved_recipes.add(recipe.pk)
+            elif is_saved == 'true':
+                user.saved_recipes.remove(recipe.pk)
+            return HttpResponse()
+        
+        # handle requests that pass rating data
+        elif 'rating' in data:
+            new_user_rating = data.get('rating')
+            recipe_rating = Rating.objects.filter(recipe=recipe, rated_by=user).first()
+            if recipe_rating:
+                recipe_rating.rating = new_user_rating + 1
+                recipe_rating.save()
+            else:
+                recipe_rating = Rating.objects.create(recipe=recipe, 
+                                                      rating=new_user_rating+1, 
+                                                      rated_by=user)
+
+
+    # check if the current user has saved this recipe
     if user.saved_recipes.filter(id=recipe_id).exists():
         recipe_saved = True
     else:
         recipe_saved = False
 
+    # check if the current user has rated this recipe
+    ratings = Rating.objects.filter(recipe=recipe)
+    if ratings.exists():
+        user_rating = ratings.filter(rated_by=user).first()
+        if user_rating:
+            user_rating = user_rating.rating
+        else:
+            user_rating = False
+    else:
+        user_rating = False   
+
     # get recipe details
     recipe_data = recipeInformation(recipe_id)
     recipe_data['recipe_saved'] = recipe_saved
+    recipe_data['user_rating'] = user_rating
     return render(request, 'view_recipe.html', recipe_data)
