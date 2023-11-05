@@ -39,6 +39,11 @@
     {% else %}
         <h6>Log in to save and rate this recipe!</h6>
     {% endif %}
+    {% if avg_rating %}
+        <p>Average Rating: {{ avg_rating }}</p>
+    {% else %}
+        <p>This recipe hasn't been rated yet</p>
+    {% endif %}
 </div>
 
 {% endblock %}

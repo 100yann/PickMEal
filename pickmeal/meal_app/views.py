@@ -5,6 +5,7 @@ import json
 import os
 from .models import User, RegisterUser, Recipe, Rating
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Avg
 
 
 
@@ -148,7 +149,7 @@ def results(request):
     if request.method == 'POST':
         data = request.POST
         ingredients = data.get('recipe-search')
-        recipes = getRecipes(ingredients)
+        # recipes = getRecipes(ingredients)
         recipes= {'Goat Cheese Pesto Pizza': {'id': 644953, 'title': 'Goat Cheese Pesto Pizza', 'image': 'https://spoonacular.com/recipeImages/644953-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 2, 'missing_ings': ['Pizza Shell', 'Goat Cheese'], 'used_ings': ['Pesto', 'Tomatoes']}, 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry': {'id': 640513, 'title': 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry', 'image': 'https://spoonacular.com/recipeImages/640513-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 3, 'missing_ings': ['Block Of Cream Cheese', 'Regular Crescents From The Section Of The Grocery', 'Egg - Beat'], 'used_ings': ['Pesto', 'Sundried Tomatoes']}, 'Pesto Fresh Caprese Sandwich': {'id': 655822, 'title': 'Pesto Fresh Caprese Sandwich', 'image': 'https://spoonacular.com/recipeImages/655822-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 4, 'missing_ings': ['Balsamic Vinegar', 'Ciabatta Roll', 'Basil Leaves', 'Mozzarella'], 'used_ings': ['Basil Pesto', 'Tomato']}}
         
         if not recipes:
@@ -161,7 +162,10 @@ def results(request):
     
 
 def recipe(request, recipe_title, recipe_id):
-    user = User.objects.get(pk=request.user.id)
+    if request.user.id:
+        user = User.objects.get(pk=request.user.id)
+    else:
+        user = False
     recipe, created = Recipe.objects.get_or_create(id=recipe_id, title=recipe_title)
 
     if request.method == 'POST':
@@ -189,14 +193,21 @@ def recipe(request, recipe_title, recipe_id):
 
 
     # check if the current user has saved this recipe
-    if user.saved_recipes.filter(id=recipe_id).exists():
-        recipe_saved = True
+    if user:
+        if user.saved_recipes.filter(id=recipe_id).exists():
+            recipe_saved = True
+        else:
+            recipe_saved = False
     else:
         recipe_saved = False
 
-    # check if the current user has rated this recipe
+    # Get all ratings and average rating for this recipe
     ratings = Rating.objects.filter(recipe=recipe)
+    avg_rating = ratings.aggregate(Avg('rating'))
+
     if ratings.exists():
+        # check if the current user has rated this recipe
+
         user_rating = ratings.filter(rated_by=user).first()
         if user_rating:
             user_rating = user_rating.rating
@@ -209,4 +220,5 @@ def recipe(request, recipe_title, recipe_id):
     recipe_data = recipeInformation(recipe_id)
     recipe_data['recipe_saved'] = recipe_saved
     recipe_data['user_rating'] = user_rating
+    recipe_data['avg_rating'] = avg_rating['rating__avg']
     return render(request, 'view_recipe.html', recipe_data)
