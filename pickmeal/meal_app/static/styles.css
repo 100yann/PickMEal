@@ -85,3 +85,16 @@ body{
 .active {
     color: yellow;
 }
+
+/* Add recipe */
+#add-recipe-flex{
+    display: flex;
+    justify-content: space-between;
+}
+#add-recipe-flex div {
+    width: 48%;
+}
+
+#remove-instruction{
+    display: none;
+}

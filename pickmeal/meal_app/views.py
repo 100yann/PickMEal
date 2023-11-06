@@ -237,3 +237,7 @@ def recipe(request, recipe_title, recipe_id):
     recipe_data['user_rating'] = user_rating
     recipe_data['avg_rating'] = avg_rating['rating__avg']
     return render(request, 'view_recipe.html', recipe_data)
+
+
+def add_recipe(request):
+    return render(request, 'add_recipe.html')

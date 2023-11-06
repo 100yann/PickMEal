@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Add Recipe{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form action="" class="form">
+        {% csrf_token %}
+        <input type="text" class='form-control' name="" id="recipe-title" placeholder="Title">
+        <input type="text" class='form-control' placeholder="Description">
+        <input type="number" class='form-control' name="" id="recipe-servings" placeholder="Servings">
+        <div id="add-recipe-flex">
+            <div id="instructions-div">
+                Instructions:
+                <ol id="instructions">
+                    <li><input class="form-control" type="text"></li>
+                </ol>
+                <button class="btn btn-dark" id="add-instruction">+</button>
+                <button class="btn btn-dark" id="remove-instruction">-</button>
+            </div>
+            <div>
+                Ingredients:
+                <ol id="ingredients">
+                    <li><input class="form-control" type="text"></li>
+                    <button class="btn btn-dark" id="add-ingredient">+</button>
+                </ol>
+            </div>
+        </div>
+
+    </form>    
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'add_recipe.js' %}"></script>
+{% endblock %}

@@ -18,7 +18,14 @@ class User(AbstractUser):
 class Recipe(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=255)
-    
+
+class UserRecipes(models.Model):
+    title = models.CharField(max_length=255)
+    ingredients = models.TextField()
+    instructions = models.TextField()
+    description = models.CharField(max_length=10000)
+    servings = models.SmallIntegerField()
+
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     rating = models.IntegerField()
