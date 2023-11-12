@@ -252,7 +252,21 @@ def recipe(request, recipe_id):
 
 
 def new_recipe(request):
+    if request.method == 'POST':
+        # get form data
+        title = request.POST.get('recipe-title')
+        description = request.POST.get('recipe-description')
+        servings = request.POST.get('recipe-servings')
+        img = request.POST.get('recipe-img')
+
+        # Get instructions
+        instructions = request.POST.getlist('recipe-instructions')
+
+        # Get ingredients
+        ingredients = request.POST.getlist('recipe-ingredients')
+        print(title, description, servings, instructions, ingredients, sep='\n')
     return render(request, 'new_recipe.html')
+
 
 
 def user(request, id):

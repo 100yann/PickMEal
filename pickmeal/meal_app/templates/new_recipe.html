@@ -5,16 +5,17 @@
 
 {% block body %}
 <div class="container">
-    <form action="" class="form">
+    <form action="{% url 'new_recipe' %}" class="form" method="POST">
         {% csrf_token %}
-        <input type="text" class='form-control' name="" id="recipe-title" placeholder="Title">
-        <input type="text" class='form-control' placeholder="Description">
-        <input type="number" class='form-control' name="" id="recipe-servings" placeholder="Servings">
+        <input type="text" class='form-control' name="recipe-title" id="recipe-title" placeholder="Title">
+        <input type="text" class='form-control' name="recipe-description"placeholder="Description">
+        <input type="number" class='form-control' name="recipe-servings" id="recipe-servings" placeholder="Servings">
+        <input type="file" name="recipe-img">
         <div id="add-recipe-flex">
             <div id="instructions-div">
                 Instructions:
                 <ol id="instructions">
-                    <li><input class="form-control" type="text"></li>
+                    <li><input class="form-control" name="recipe-instructions" type="text"></li>
                 </ol>
                 <button class="btn btn-dark" id="add-instruction">+</button>
                 <button class="btn btn-dark" id="remove-instruction">-</button>
@@ -22,7 +23,7 @@
             <div>
                 Ingredients:
                 <ol id="ingredients">
-                    <li><input class="form-control" type="text"></li>
+                    <li><input class="form-control" name="recipe-ingredients" type="text"></li>
                 </ol>
                 <button class="btn btn-dark" id="add-ingredient">+</button>
                 <button class="btn btn-dark" id="remove-ingredient">-</button>

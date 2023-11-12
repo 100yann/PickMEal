@@ -24,7 +24,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function addListElement(parentElement, num, removeStep){
     const newStep = document.createElement('li')
-    newStep.innerHTML = '<input class="form-control" type="text">'
+    if (parentElement.id === 'instructions'){
+        newStep.innerHTML = '<input class="form-control" type="text" name="recipe-instructions">'
+    } else {
+        newStep.innerHTML = '<input class="form-control" type="text" name="recipe-ingredients">'
+
+    }
     
     parentElement.insertBefore(newStep, parentElement.lastChild)
 
