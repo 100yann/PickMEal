@@ -98,6 +98,10 @@ body{
 #remove-instruction{
     display: none;
 }
+#remove-ingredient{
+    display: none;
+}
+
 
 
 /* USER PROFILE */

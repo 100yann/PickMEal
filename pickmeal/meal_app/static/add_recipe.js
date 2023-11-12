@@ -4,26 +4,41 @@ document.addEventListener("DOMContentLoaded", () => {
     addInstructions.onclick = ((event) => {
         event.preventDefault()
         numInstructions++
-
         const orderedList = document.getElementById('instructions')
-        const newStep = document.createElement('li')
-        newStep.innerHTML = '<input class="form-control" type="text">'
-        orderedList.insertBefore(newStep, orderedList.lastChild)
+        const removeStep = document.getElementById('remove-instruction')
 
-        if (numInstructions > 1){
-            const removeStep = document.getElementById('remove-instruction')
-            removeStep.style.display = 'inline-block'
-            removeStep.onclick = ((event) => {
-                event.preventDefault()
-                numInstructions--;
-                if (numInstructions === 1){
-                    removeStep.style.display = 'none'
-                }
-            })
-        }
+        addListElement(orderedList, numInstructions, removeStep)
+    })
 
+    var numIngredients = 1
+    const addIngredients = document.getElementById('add-ingredient')
+    addIngredients.onclick = ((event) => {
+        event.preventDefault()
+        numIngredients++
+        const ingsOrderedList = document.getElementById('ingredients')
+        const removeStep = document.getElementById('remove-ingredient')
 
-
-
+        addListElement(ingsOrderedList, numIngredients, removeStep)
     })
 })
+
+function addListElement(parentElement, num, removeStep){
+    const newStep = document.createElement('li')
+    newStep.innerHTML = '<input class="form-control" type="text">'
+    
+    parentElement.insertBefore(newStep, parentElement.lastChild)
+
+    if (num > 1){
+        removeStep.style.display = 'inline-block'
+        removeStep.onclick = ((event) => {
+            event.preventDefault()
+            num--;
+            var lastLi = parentElement.lastElementChild
+            parentElement.removeChild(lastLi)
+            if (num === 1){
+                removeStep.style.display = 'none'
+            }
+        })
+    }
+
+}

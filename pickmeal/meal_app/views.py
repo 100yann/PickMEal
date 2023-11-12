@@ -251,8 +251,8 @@ def recipe(request, recipe_id):
     return render(request, 'view_recipe.html', recipe_data)
 
 
-def add_recipe(request):
-    return render(request, 'add_recipe.html')
+def new_recipe(request):
+    return render(request, 'new_recipe.html')
 
 
 def user(request, id):
