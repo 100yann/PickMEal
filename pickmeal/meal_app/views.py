@@ -150,8 +150,9 @@ def results(request):
     if request.method == 'POST':
         data = request.POST
         ingredients = data.get('recipe-search')
-        recipes = getRecipes(ingredients)
-
+        formatted_ings = [x.title() for x in ingredients]
+        # recipes = getRecipes(ingredients)
+        recipes= {'Goat Cheese Pesto Pizza': {'id': 644953, 'title': 'Goat Cheese Pesto Pizza', 'image': 'https://spoonacular.com/recipeImages/644953-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 2, 'missing_ings': ['Pizza Shell', 'Goat Cheese'], 'used_ings': ['Pesto', 'Tomatoes']}, 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry': {'id': 640513, 'title': 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry', 'image': 'https://spoonacular.com/recipeImages/640513-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 3, 'missing_ings': ['Block Of Cream Cheese', 'Regular Crescents From The Section Of The Grocery', 'Egg - Beat'], 'used_ings': ['Pesto', 'Sundried Tomatoes']}, 'Pesto Fresh Caprese Sandwich': {'id': 655822, 'title': 'Pesto Fresh Caprese Sandwich', 'image': 'https://spoonacular.com/recipeImages/655822-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 4, 'missing_ings': ['Balsamic Vinegar', 'Ciabatta Roll', 'Basil Leaves', 'Mozzarella'], 'used_ings': ['Basil Pesto', 'Tomato']}}
         if not recipes:
             # handle error
             ...
@@ -171,8 +172,10 @@ def results(request):
             if recipe_id in recipe_ratings:
                 # update the recipe's average rating
                 value['avg_rating'] = recipe_ratings[recipe_id]
+
         return render(request, 'results.html', context={
-            'results': recipes
+            'results': recipes,
+            'ingredients': ingredients.title()
             })
     
 

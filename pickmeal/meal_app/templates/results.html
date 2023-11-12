@@ -3,45 +3,61 @@
 {% block title %}Recipes{% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="results-heading">
+        <h1>{{ ingredients }} Recipes</h1>
+    </div>
+    <div class="container recipe-list">
         {% for title, result in results.items %}
-            <a href="{% url 'recipe' recipe_id=result.id %}">
-                <div class="row">
-                    <div class="col-lg-4 col-sm-12">
-                        <img src="{{ result.image }}" alt="recipe-image">
+            <article>
+                <a href="{% url 'recipe' recipe_id=result.id %}" class="recipe-listing-link">
+                    <div class="recipe-image">
+                        <img class="recipe-card-img" src="{{ result.image }}" alt="recipe-image">
                     </div>
-                    <div class="col-lg-6 col-sm-12">
-                        <div class="recipe-card-title">
-                            <h3>{{ result.title }}</h3>
-                        </div>
-                        <div id="recipe-card-ings">
-                            <div>
-                                Available Ingredients ({{ result.num_used_ings }}):
-                                <ul>
-                                    {% for ing in result.used_ings %}
-                                        <li>{{ ing }}</li>
-                                    {% endfor %}  
-                                </ul>                        
-                            </div>
-                            <div id="needed-ings">
-                                Needed Ingredients ({{ result.num_missing_ings }}):
-                                <ul>
-                                    {% for ing in result.missing_ings %}
-                                        <li>{{ ing }}</li>
-                                    {% endfor %}
-                                </ul>                        
-                            </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">{{ result.title }}</h3>
+                        <h6>{{ result.num_used_ings }} Available Ingredients: </h6>
+                        <p>{{ result.used_ings|join:", " }}</p>
 
-                        </div>
-                    {% if result.avg_rating %}
-                        <p>Average rating: <span id="rating">{{ result.avg_rating}}</span></p>
-                    {% else %}
-                        <p>No user ratings available</p>
-                    {% endif %}
-
+                        <hr>
+                        <h6>{{ result.num_missing_ings }} Needed Ingredients: </h6>
+                        <p>{{ result.missing_ings|join:", " }}</p>
                     </div>
-                </div>  
-            </a>
+                </a>
+            </article>
+                    <!-- <div class="col-lg-4 col-sm-12 m-0 recipe-tn">
+                        <img class="recipe-card-img" src="{{ result.image }}" alt="recipe-image">
+                    </div>
+                    <div class="col-lg-8 col-sm-12 m-0">
+                        <div class="recipe-text">
+                            <div class="recipe-card-title">
+                                
+                            </div>
+                            <hr>
+                            <div id="recipe-card-ings">
+                                <div>
+                                    <h6>{{ result.num_used_ings }} Available Ingredients:</h6>
+                                    <ul>
+                                        {% for ing in result.used_ings %}
+                                            <li>{{ ing }}</li>
+                                        {% endfor %}  
+                                    </ul>                        
+                                </div>
+                                <div id="needed-ings">
+                                    <h6>{{ result.num_missing_ings }} Needed Ingredients:</h6>
+                                    <ul>
+                                        {% for ing in result.missing_ings %}
+                                            <li>{{ ing }}</li>
+                                        {% endfor %}
+                                    </ul>                        
+                                </div>
+
+                            </div>
+                            {% if result.avg_rating %}
+                                <p>Average rating: <span id="rating">{{ result.avg_rating}}</span></p>
+                            {% endif %}
+                        </div>
+                    </div> 
+            </a> -->
         {% endfor %}
     </div>
 

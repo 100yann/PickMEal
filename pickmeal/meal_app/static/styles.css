@@ -1,6 +1,17 @@
 body{
     height: fit-content;
 }
+.navbar-brand {
+    font-family: 'Agbalumo', cursive;
+    color: #609966!important;
+}
+.nav-item {
+    font-family: 'Paytone One';
+}
+.btn {
+    background-color: #609966!important;
+    border: none;
+}
 .errorlist {
     padding: 0;
 }
@@ -102,28 +113,53 @@ body{
 
 
 /* RESULTS */
-.row {
-    background-color: rgb(214, 255, 214);
-    border-radius: 25px;
-    margin-bottom: 10px;    
+.results-heading{
+    margin: 0 auto 15px;
+    text-align: center;
+    background-color: #609966;
+    padding: 25px;
+    color: #ffffff;
 }
 
-.recipe-card-title{
-    display: block;
-    text-wrap: wrap;
-    word-wrap: normal;
-    height: fit-content;
-    margin: 10px 0 20px;
+
+.recipe-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
 }
 
-#recipe-card-ings{
-    display: flex;
-    justify-content: space-between;
+article {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
 }
-#needed-ings{
-    width: 50%;
-    word-wrap: normal;
+
+.recipe-title{
+    font-family: 'Paytone One';
+    margin: 10px 10px 35px;
 }
+
+.recipe-content p, .recipe-content h6 {
+    text-align: left;
+}
+@media (min-width: 650px) {
+    .recipe-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (min-width: 660px) {
+    .recipe-list {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+.recipe-listing-link{
+    color: black;
+}
+
+
+
 .rating{
     margin-top: 10px;
     background-color: rgb(66, 66, 66);
