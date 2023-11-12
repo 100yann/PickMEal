@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load static %}
 {% block title %} PickMeal {% endblock %}
 {% block body %}        
 <div class="page-heading">
@@ -18,7 +19,8 @@
     </div>
     <p id="photo-attribution">Photo by <a href="https://unsplash.com/@marisolbenitez?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Marisol Benitez</a> on <a href="https://unsplash.com/photos/pile-of-vegetables-QvkAQTNj4zk?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a></p>
 </div>
+{% endblock %}
 
-
-
+{% block scripts %}
+<script src="{% static 'validate_search.js' %}"></script>
 {% endblock %}

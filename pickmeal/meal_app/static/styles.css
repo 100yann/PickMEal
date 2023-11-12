@@ -50,10 +50,12 @@ body{
     margin: 50px auto;  
 }
 
-
-
 #recipe-search {
     margin: auto auto 12px;
+}
+
+.recipe-search-error::placeholder{
+    color: red;
 }
 
 #recipe-label{
