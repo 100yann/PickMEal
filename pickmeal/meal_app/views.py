@@ -69,12 +69,13 @@ def recipeInformation(recipe_id):
                 'Instructions': '',
                 '\n\n': '',
             }
-            for key, value in fields.items():
-                instructions = instructions.replace(key, value)
-            
-            # make the instructions into an ordered list if they aren't already
-            if '<ol>' not in instructions and '<p>' not in instructions:
-                instructions = "<ol><li>" + instructions.replace("\n", "</li><li>") + "</li></ol>"
+            if instructions:
+                for key, value in fields.items():
+                    instructions = instructions.replace(key, value)
+                
+                # make the instructions into an ordered list if they aren't already
+                if '<ol>' not in instructions and '<p>' not in instructions:
+                    instructions = "<ol><li>" + instructions.replace("\n", "</li><li>") + "</li></ol>"
 
             recipe_data = {
                 'id': recipe_id,
@@ -176,12 +177,24 @@ def results(request):
             })
     
 
-def recipe(request, recipe_title, recipe_id):
+def recipe(request, recipe_id):
     if request.user.id:
         user = User.objects.get(pk=request.user.id)
     else:
         user = False
-    recipe, created = Recipe.objects.get_or_create(id=recipe_id, title=recipe_title)
+
+    # get recipe details
+    recipe_data = recipeInformation(recipe_id)
+    if Recipe.objects.filter(id=recipe_id).exists():
+        recipe = Recipe.objects.get(id=recipe_id)
+    else:
+        recipe = Recipe.objects.create(id=recipe_id, 
+                                        title=recipe_data['title'],
+                                        ingredients=recipe_data['ingredients'],
+                                        instructions = recipe_data['instructions'],
+                                        description=recipe_data['summary'],
+                                        servings=recipe_data['servings'],
+                                        image=recipe_data['image'])
 
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -231,8 +244,7 @@ def recipe(request, recipe_title, recipe_id):
     else:
         user_rating = False   
 
-    # get recipe details
-    recipe_data = recipeInformation(recipe_id)
+    # add necessary fields to recipe_data
     recipe_data['recipe_saved'] = recipe_saved
     recipe_data['user_rating'] = user_rating
     recipe_data['avg_rating'] = avg_rating['rating__avg']
@@ -241,3 +253,10 @@ def recipe(request, recipe_title, recipe_id):
 
 def add_recipe(request):
     return render(request, 'add_recipe.html')
+
+
+def user(request, id):
+    recipes_saved = Recipe.objects.filter(users_who_saved=id)
+    return render(request, 'user.html', context={
+        'recipes': recipes_saved
+    })

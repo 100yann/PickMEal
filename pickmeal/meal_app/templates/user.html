@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ user }}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>{{ user }}</h1>
+
+    <div>
+        <button>Saved Recipes</button>
+        <button>User Recipes</button>        
+    </div>
+
+    {% for recipe in recipes %}
+        <div class="row">
+            <div class="col-lg-4 col-sm-12">
+                <img class="recipe-listing-img" src="{{ recipe.image }}" alt="recipe-image">
+            </div>
+            <div class="col-lg-8 col-sm-12">
+                <div class="recipe-card-title">
+                    <h3>{{ recipe.title }}</h3>
+                </div>
+                <div id="recipe-card-ings">
+                    <p>{{ recipe.description|safe }}</p>
+                </div>
+            </div>
+        </div>  
+    {% endfor %}
+</div>
+{% endblock %}

@@ -18,6 +18,11 @@ class User(AbstractUser):
 class Recipe(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=255)
+    ingredients = models.TextField(blank=True)
+    instructions = models.TextField(blank=True, null=True)
+    description = models.CharField(blank=True, max_length=10000)
+    servings = models.SmallIntegerField(blank=True)
+    image = models.URLField(blank=True)
 
 class UserRecipes(models.Model):
     title = models.CharField(max_length=255)

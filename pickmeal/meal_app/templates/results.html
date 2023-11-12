@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container">
         {% for title, result in results.items %}
-            <a href="{% url 'recipe' recipe_title=result.title recipe_id=result.id %}">
+            <a href="{% url 'recipe' recipe_id=result.id %}">
                 <div class="row">
                     <div class="col-lg-4 col-sm-12">
                         <img src="{{ result.image }}" alt="recipe-image">

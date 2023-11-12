@@ -98,3 +98,10 @@ body{
 #remove-instruction{
     display: none;
 }
+
+
+/* USER PROFILE */
+.recipe-listing-img{
+    width: 100%;
+    height: 100%;
+}
