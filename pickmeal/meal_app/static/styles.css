@@ -5,7 +5,8 @@ body{
     font-family: 'Agbalumo', cursive;
     color: #609966!important;
 }
-.nav-item {
+
+.nav-item, #recipe-title, h4 {
     font-family: 'Paytone One';
 }
 .btn {
@@ -160,19 +161,7 @@ article {
 
 
 
-.rating{
-    margin-top: 10px;
-    background-color: rgb(66, 66, 66);
-    width: fit-content;
-    padding: 15px;
-    border-radius: 25px;
-}
-.fa-burger{
-    color: white;
-}
-.active {
-    color: yellow;
-}
+
 
 /* Add recipe */
 #add-recipe-flex{
@@ -191,7 +180,40 @@ article {
 }
 
 
+/* VIEW RECIPE */
+#recipe-image {
+    width: 100%;
+    height: auto;
+    margin: 15px auto;
+}
 
+@media (min-width: 1000px){
+    #recipe-image{
+        width: 60%;
+    }
+}
+.rating{
+    border-radius: 5px;
+    background-color: #609966;
+    width: fit-content;
+    padding: 6px 12px;
+}
+.fa-burger{
+    color: white;
+}
+.active {
+    color: yellow;
+}
+
+#recipe-interactions{
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+}
+.recipe-save, .recipe-rate{
+    margin: 5px 10px 25px;
+}
 /* USER PROFILE */
 .recipe-listing-img{
     width: 100%;
