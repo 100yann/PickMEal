@@ -32,7 +32,7 @@ class UserRecipes(models.Model):
     servings = models.SmallIntegerField()
 
 class Rating(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
     rating = models.IntegerField()
     rated_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

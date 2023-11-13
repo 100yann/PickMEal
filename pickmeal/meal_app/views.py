@@ -93,6 +93,9 @@ def recipeInformation(recipe_id):
         return None
     
 
+def getTopRecipes():
+    top_rated_recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')[:3]
+    return top_rated_recipes    
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -237,7 +240,6 @@ def recipe(request, recipe_id):
 
     if ratings.exists():
         # check if the current user has rated this recipe
-
         user_rating = ratings.filter(rated_by=user).first()
         if user_rating:
             user_rating = user_rating.rating
@@ -250,6 +252,8 @@ def recipe(request, recipe_id):
     recipe_data['recipe_saved'] = recipe_saved
     recipe_data['user_rating'] = user_rating
     recipe_data['avg_rating'] = avg_rating['rating__avg']
+    top_rated_recipes = getTopRecipes()
+    recipe_data['top_recipes'] = top_rated_recipes
     return render(request, 'view_recipe.html', recipe_data)
 
 

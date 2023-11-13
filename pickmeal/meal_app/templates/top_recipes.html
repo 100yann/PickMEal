@@ -1,0 +1,13 @@
+<div class="extra-content">
+    <h4>Top recipes</h4>
+    {% for top_recipe in top_recipes %}
+        <div>
+            <a href="{% url 'recipe'  recipe_id=top_recipe.id %}">
+            <h6>{{ top_recipe.title }}</h6>
+            <img src="{{ top_recipe.image }}" alt="" style="width: 150px; height: 100px;">            
+            </a>    
+        <hr>
+        </div>
+       
+    {% endfor %}
+</div>

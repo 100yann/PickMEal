@@ -5,54 +5,62 @@
 
 {% block body %}
 <div class="container">
-    <img id="recipe-image" src="{{ image }}" alt="">
-
-    <h1 id="recipe-title">{{ title }}</h1>
-    <p>{{ summary|safe }}</p>
-    <hr>
-    <h4>Servings: {{ servings }}</h4>
-    {% if avg_rating %}
-        <h4>Average Rating: {{ avg_rating }}</h4>
-    {% endif %} 
+    <div class="row">
+        <div class="col-lg-8 recipe-body">
+            <img id="recipe-image" src="{{ image }}" alt="recipe-image">
+            <h1 id="recipe-title">{{ title }}</h1>
+            <p>{{ summary|safe }}</p>
+            <hr>
+            <h4>Servings: {{ servings }}</h4>
+            {% if avg_rating %}
+                <h4>Average Rating: <span style="color: #609966">{{ avg_rating }}</span></h4>
+            {% endif %} 
+            
+            <hr>
+            <h4>Ingredients</h4>
+            <ul>
+                {% for ing in ingredients %}
+                <li>{{ing}}</li>
+                {% endfor %}
+            </ul>
+            <hr>
+            <h4>Instructions</h4>
+            {{ instructions|safe }}
+            <hr>
     
-    <hr>
-    <h4>Ingredients</h4>
-    <ul>
-        {% for ing in ingredients %}
-        <li>{{ing}}</li>
-        {% endfor %}
-    </ul>
-    <hr>
-    <h4>Instructions</h4>
-    {{ instructions|safe }}
-    <hr>
-
-
-    <div id="recipe-interactions">    
-        {% csrf_token %}
-        {% if user.is_authenticated %}
-            <div class="recipe-save">
-                <h6>Save this recipe</h6>
-                {% if recipe_saved %}
-                    <button class="btn btn-primary" id="save-recipe" data-saved="true"><i class="fa-solid fa-bookmark fa-lg mr-3"></i>Recipe Saved</button>
+    
+            <div id="recipe-interactions">    
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                    <div class="recipe-save">
+                        <h6>Save this recipe</h6>
+                        {% if recipe_saved %}
+                            <button class="btn btn-primary" id="save-recipe" data-saved="true"><i class="fa-solid fa-bookmark fa-lg mr-3"></i>Recipe Saved</button>
+                        {% else %}
+                            <button class="btn btn-primary" id="save-recipe" data-saved="false"><i class="fa-regular fa-bookmark fa-lg mr-3"></i>Save Recipe</button>
+                        {% endif %}                  
+                    </div>
+                    <div class="recipe-rate">
+                        <h6>Rate this recipe</h6>
+                        <div class="rating">
+                            <i class="fa-solid fa-burger fa-lg"></i>
+                            <i class="fa-solid fa-burger fa-lg"></i>
+                            <i class="fa-solid fa-burger fa-lg"></i>
+                            <i class="fa-solid fa-burger fa-lg"></i>
+                            <i class="fa-solid fa-burger fa-lg"></i>
+                        </div>
+                    </div> 
                 {% else %}
-                    <button class="btn btn-primary" id="save-recipe" data-saved="false"><i class="fa-regular fa-bookmark fa-lg mr-3"></i>Save Recipe</button>
-                {% endif %}                  
+                    <h6>Log in to save and rate this recipe!</h6>
+                {% endif %}
             </div>
-            <div class="recipe-rate">
-                <h6>Rate this recipe</h6>
-                <div class="rating">
-                    <i class="fa-solid fa-burger fa-lg"></i>
-                    <i class="fa-solid fa-burger fa-lg"></i>
-                    <i class="fa-solid fa-burger fa-lg"></i>
-                    <i class="fa-solid fa-burger fa-lg"></i>
-                    <i class="fa-solid fa-burger fa-lg"></i>
-                </div>
-            </div> 
-        {% else %}
-            <h6>Log in to save and rate this recipe!</h6>
-        {% endif %}
+        </div>
+        
+        <div class="col-lg-2 extra-info">
+            {% include "top_recipes.html" %}
+        </div>
     </div>
+
 </div>
 
 {% endblock %}
