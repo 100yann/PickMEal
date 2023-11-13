@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django import forms
-import json 
+from django.db.models import Avg
+
+
 # Create your models here.
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -23,6 +25,16 @@ class Recipe(models.Model):
     description = models.CharField(blank=True, max_length=10000)
     servings = models.SmallIntegerField(blank=True)
     image = models.URLField(blank=True)
+    added_on = models.DateField(auto_now=True)
+
+    @classmethod
+    def getRecentRecipes(cls, num):
+        return cls.objects.all().order_by('-added_on')[:num]
+    
+    @classmethod
+    def getTopRecipes(cls, num):
+        return cls.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')[:num]
+
 
 class UserRecipes(models.Model):
     title = models.CharField(max_length=255)
