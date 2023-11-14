@@ -260,7 +260,7 @@ def new_recipe(request):
         description = request.POST.get('recipe-description')
         servings = request.POST.get('recipe-servings')
         img = request.POST.get('recipe-img')
-
+        
         # Get instructions
         instructions = request.POST.getlist('recipe-instructions')
 

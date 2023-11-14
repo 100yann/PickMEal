@@ -2,7 +2,23 @@ var numInstructions = 1
 var numIngredients = 1
 
 document.addEventListener("DOMContentLoaded", () => {
-    
+    const submitButton = document.getElementById('save-new-recipe')
+    // Validate title
+    const recipeTitle = document.getElementById('new-recipe-title')
+    recipeTitle.addEventListener('keyup', () => {
+        const chars = document.getElementById('keys-pressed')
+        var charNums = recipeTitle.value.length
+        chars.textContent = `keys pressed: ${charNums}/75`;
+        if (charNums > 75){
+            recipeTitle.style.border = '2px solid red'
+            submitButton.disabled = true;
+        } else {
+            recipeTitle.style.border = '1px solid grey'
+            recipeTitle.disabled = false;
+
+        }
+    })
+    // Add new instruction step field
     const addInstructions = document.getElementById('add-instruction')
     addInstructions.onclick = ((event) => {
         event.preventDefault()
@@ -13,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addListElement(orderedList, 'instruction', removeStep, numInstructions)
     })
 
+    // Add new ingredient field
     const addIngredients = document.getElementById('add-ingredient')
     addIngredients.onclick = ((event) => {
         event.preventDefault()
