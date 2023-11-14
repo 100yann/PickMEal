@@ -1,5 +1,8 @@
+var numInstructions = 1
+var numIngredients = 1
+
 document.addEventListener("DOMContentLoaded", () => {
-    var numInstructions = 1
+    
     const addInstructions = document.getElementById('add-instruction')
     addInstructions.onclick = ((event) => {
         event.preventDefault()
@@ -7,10 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const orderedList = document.getElementById('instructions')
         const removeStep = document.getElementById('remove-instruction')
 
-        addListElement(orderedList, numInstructions, removeStep)
+        addListElement(orderedList, 'instruction', removeStep, numInstructions)
     })
 
-    var numIngredients = 1
     const addIngredients = document.getElementById('add-ingredient')
     addIngredients.onclick = ((event) => {
         event.preventDefault()
@@ -18,11 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const ingsOrderedList = document.getElementById('ingredients')
         const removeStep = document.getElementById('remove-ingredient')
 
-        addListElement(ingsOrderedList, numIngredients, removeStep)
+        addListElement(ingsOrderedList, 'ingredient', removeStep, numIngredients)
     })
 })
 
-function addListElement(parentElement, num, removeStep){
+function addListElement(parentElement, buttonName, removeStep, num){
+
     const newStep = document.createElement('li')
     if (parentElement.id === 'instructions'){
         newStep.innerHTML = '<input class="form-control" type="text" name="recipe-instructions">'
@@ -38,6 +41,11 @@ function addListElement(parentElement, num, removeStep){
         removeStep.onclick = ((event) => {
             event.preventDefault()
             num--;
+            if (buttonName === 'ingredient'){
+                numIngredients--;
+            } else {
+                numInstructions--;
+            }
             var lastLi = parentElement.lastElementChild
             parentElement.removeChild(lastLi)
             if (num === 1){

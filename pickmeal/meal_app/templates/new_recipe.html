@@ -4,16 +4,21 @@
 {% block title %}Add Recipe{% endblock %}
 
 {% block body %}
-<div class="container">
+<div class="results-heading">
+    <h2 id="new-recipe-heading">Add a new recipe</h2>
+</div>
+<div class="container new-recipe-container">
     <form action="{% url 'new_recipe' %}" class="form" method="POST">
         {% csrf_token %}
-        <input type="text" class='form-control' name="recipe-title" id="recipe-title" placeholder="Title">
-        <input type="text" class='form-control' name="recipe-description"placeholder="Description">
-        <input type="number" class='form-control' name="recipe-servings" id="recipe-servings" placeholder="Servings">
-        <input type="file" name="recipe-img">
+        <input type="text" class='form-control new-recipe' name="recipe-title" id="new-recipe-title" placeholder="Title">
+        <input type="text" class='form-control new-recipe' name="recipe-description"placeholder="Description">
+        <input type="number" class='form-control new-recipe' name="recipe-servings" id="recipe-servings" placeholder="Servings">
+        <label for="recipe-img">Recipe Image</label>
+        <input type="file" name="recipe-img" class="new-recipe">
+
         <div id="add-recipe-flex">
             <div id="instructions-div">
-                Instructions:
+                <h6>Instructions:</h6>
                 <ol id="instructions">
                     <li><input class="form-control" name="recipe-instructions" type="text"></li>
                 </ol>
@@ -21,7 +26,7 @@
                 <button class="btn btn-dark" id="remove-instruction">-</button>
             </div>
             <div>
-                Ingredients:
+                <h6>Ingredients:</h6>
                 <ol id="ingredients">
                     <li><input class="form-control" name="recipe-ingredients" type="text"></li>
                 </ol>
@@ -29,7 +34,7 @@
                 <button class="btn btn-dark" id="remove-ingredient">-</button>
             </div>
         </div>
-        <input class="btn btn-primary" type="submit" name="" id="" value="Add Recipe">
+        <input class="btn btn-primary" type="submit" name="" id="save-new-recipe" value="Add Recipe">
 
     </form>    
 </div>

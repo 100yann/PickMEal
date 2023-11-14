@@ -6,7 +6,7 @@ body{
     color: #609966!important;
 }
 
-.nav-item, #recipe-title, h4 {
+.nav-item, #recipe-title, h4, h1, h2 {
     font-family: 'Paytone One';
 }
 .btn {
@@ -127,6 +127,7 @@ body{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
+    margin-bottom: 30px;
 }
 
 article {
@@ -157,26 +158,6 @@ article {
 
 .recipe-listing-link{
     color: black;
-}
-
-
-
-
-
-/* Add recipe */
-#add-recipe-flex{
-    display: flex;
-    justify-content: space-between;
-}
-#add-recipe-flex div {
-    width: 48%;
-}
-
-#remove-instruction{
-    display: none;
-}
-#remove-ingredient{
-    display: none;
 }
 
 
@@ -241,4 +222,68 @@ article {
     padding: 15px;
     width: fit-content;
 
+}
+
+/* NEW RECIPES */
+.new-recipe-container{
+    margin-top: 40px;
+    width: 60%;
+}
+
+#add-recipe-flex{
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+#add-recipe-flex div {
+    width: 48%;
+}
+
+#remove-instruction{
+    display: none;
+}
+#remove-ingredient{
+    display: none;
+}
+
+
+#new-recipe-heading{
+    text-align: center;
+    margin: 10px auto 20px;
+}
+.new-recipe{
+    margin: 10px auto 0;
+}
+
+#add-instruction, #add-ingredient {
+    margin-left: 40px;
+}
+
+#add-instruction, #add-ingredient, #remove-ingredient, #remove-instruction {
+    width: 35px;
+    height: 35px;
+}
+#instructions li, #ingredients li {
+    margin-bottom: 10px;
+}
+
+#save-new-recipe{
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+@media (max-width: 900px){
+    .new-recipe-container{
+        margin-top: 40px;
+        width: 95%;
+    }
+    #add-recipe-flex{
+        display: block;
+    }
+    #add-recipe-flex div {
+        margin-top: 30px;
+        width: 100%;
+    }
+    
 }
