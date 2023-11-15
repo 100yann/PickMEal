@@ -42,6 +42,7 @@ def upload_location(instance, filename):
     return 'recipe_images/%s.%s' % (instance.title, extension)
 
 class UserRecipes(models.Model):
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     ingredients = models.TextField()
     instructions = models.TextField()

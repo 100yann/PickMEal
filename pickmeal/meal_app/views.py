@@ -257,6 +257,7 @@ def new_recipe(request):
     if request.method == 'POST':
         form = NewUserRecipe(request.POST, request.FILES)
         if form.is_valid():
+
             # get form data
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
@@ -270,7 +271,10 @@ def new_recipe(request):
             # Get ingredients
             ingredients = request.POST.getlist('recipe-ingredients')
 
+            # Get current user
+            user_instance = User.objects.get(pk=request.user.id)
             recipe = UserRecipes(
+                created_by=user_instance,
                 title=title,
                 description=description,
                 image=image,
@@ -295,8 +299,12 @@ def new_recipe(request):
 
 def user(request, id):
     recipes_saved = Recipe.objects.filter(users_who_saved=id)
+    user_recipes = UserRecipes.objects.filter(created_by=id)
+    user = User.objects.get(pk=id)
     return render(request, 
-                  'user.html', 
+                  'user.html',      
                   context={
-        'recipes': recipes_saved
-    })
+                    'profile': user,
+                    'recipes': recipes_saved,
+                    'user_recipes': user_recipes
+                    })
