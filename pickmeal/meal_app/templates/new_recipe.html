@@ -10,9 +10,14 @@
 <div class="container new-recipe-container">
     <form action="{% url 'new_recipe' %}" class="form" method="POST">
         {% csrf_token %}
-        <input type="text" class='form-control new-recipe' name="recipe-title" id="new-recipe-title" placeholder="Title">
-        <p id="keys-pressed">keys pressed: 0</p>
-        <input type="text" class='form-control new-recipe' name="recipe-description"placeholder="Description">
+        <div style="position: relative;">
+            <input type="text" class="form-control new-recipe" name="recipe-title" id="new-recipe-title" placeholder="Title">
+            <span  class="char-count" id="char-count-title">0/75</span>
+        </div>
+        <div style="position:relative;">
+            <textarea name="recipe-description" class="form-control new-recipe" id="new-recipe-description"cols="30" rows="7" placeholder="Description"></textarea>
+            <span class="char-count" id="char-count-description">0/300</span>
+        </div>
         <input type="number" class='form-control new-recipe' name="recipe-servings" id="recipe-servings" placeholder="Servings">
         <label for="recipe-img">Recipe Image</label>
         <input type="file" name="recipe-img" class="new-recipe">
@@ -35,7 +40,7 @@
                 <button class="btn btn-dark" id="remove-ingredient">-</button>
             </div>
         </div>
-        <input class="btn btn-primary" type="submit" name="" id="save-new-recipe" value="Add Recipe">
+        <input class="btn btn-primary" type="submit" name="" id="save-new-recipe" value="Add Recipe" disabled>
 
     </form>    
 </div>

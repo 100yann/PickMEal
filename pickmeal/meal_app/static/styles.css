@@ -253,6 +253,7 @@ article {
 }
 .new-recipe{
     margin: 10px auto 0;
+    padding-right: 70px;
 }
 
 #add-instruction, #add-ingredient {
@@ -273,6 +274,11 @@ article {
     padding: 10px;
 }
 
+.char-count{
+    position: absolute; 
+    top: 7px; 
+    right: 8px;
+}
 @media (max-width: 900px){
     .new-recipe-container{
         margin-top: 40px;

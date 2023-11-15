@@ -2,22 +2,23 @@ var numInstructions = 1
 var numIngredients = 1
 
 document.addEventListener("DOMContentLoaded", () => {
-    const submitButton = document.getElementById('save-new-recipe')
-    // Validate title
     const recipeTitle = document.getElementById('new-recipe-title')
-    recipeTitle.addEventListener('keyup', () => {
-        const chars = document.getElementById('keys-pressed')
-        var charNums = recipeTitle.value.length
-        chars.textContent = `keys pressed: ${charNums}/75`;
-        if (charNums > 75){
-            recipeTitle.style.border = '2px solid red'
-            submitButton.disabled = true;
-        } else {
-            recipeTitle.style.border = '1px solid grey'
-            recipeTitle.disabled = false;
+    const recipeDescr = document.getElementById('new-recipe-description')
 
-        }
+    // Validate title length
+    recipeTitle.addEventListener('keyup', () => {
+        const displayTitleChars = document.getElementById('char-count-title')
+        checkInput(recipeDescr, recipeTitle)
+        calcInput(recipeTitle, displayTitleChars, 75)
     })
+
+    // Validate description length 
+    recipeDescr.addEventListener('keyup', () => {
+        const displayDescrChars = document.getElementById('char-count-description')
+        checkInput(recipeDescr, recipeTitle)
+        calcInput(recipeDescr, displayDescrChars, 300)
+    })
+
     // Add new instruction step field
     const addInstructions = document.getElementById('add-instruction')
     addInstructions.onclick = ((event) => {
@@ -41,8 +42,32 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 })
 
-function addListElement(parentElement, buttonName, removeStep, num){
+// If title and description have values make the submit button active
+function checkInput(element1, element2){
+    if (element1.value.length > 0 && element2.value.length > 0){
+        document.getElementById('save-new-recipe').disabled = false;
+    } else {
+        document.getElementById('save-new-recipe').disabled = true;
+    }
+}
 
+// Check if a field has more than the maxChars inputted
+function calcInput(elementToCheck, elementToDisplay, maxChars){
+    const submitButton = document.getElementById('save-new-recipe')
+
+    var charNums = elementToCheck.value.length
+    elementToDisplay.textContent = `${charNums}/${maxChars}`;
+
+    if (charNums > maxChars ){
+        elementToCheck.style.border = '2px solid red'
+        submitButton.disabled = true;
+    } else if (charNums < maxChars) {
+        elementToCheck.style.border = '1px solid rgb(206, 212, 218)'
+    }
+}
+
+// Add a new list element to instructions/ingredients
+function addListElement(parentElement, buttonName, removeStep, num){
     const newStep = document.createElement('li')
     if (parentElement.id === 'instructions'){
         newStep.innerHTML = '<input class="form-control" type="text" name="recipe-instructions">'
