@@ -6,40 +6,55 @@
 {% block body %}
 <div class="results-heading">
     <h2 id="new-recipe-heading">Add a new recipe</h2>
+    <h6>All fields are required</h6>
 </div>
 <div class="container new-recipe-container">
-    <form action="{% url 'new_recipe' %}" class="form" method="POST">
+    <form action="{% url 'new_recipe' %}" class="form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        <label for="id_title"><h5>Title</h5></label>
         <div style="position: relative;">
-            <input type="text" class="form-control new-recipe" name="recipe-title" id="new-recipe-title" placeholder="Title">
+            {{ form.title }}
             <span  class="char-count" id="char-count-title">0/75</span>
         </div>
+
+        <label for="id_description"><h5>Description</h5></label>
         <div style="position:relative;">
-            <textarea name="recipe-description" class="form-control new-recipe" id="new-recipe-description"cols="30" rows="7" placeholder="Description"></textarea>
+            {{ form.description }}
             <span class="char-count" id="char-count-description">0/300</span>
         </div>
-        <input type="number" class='form-control new-recipe' name="recipe-servings" id="recipe-servings" placeholder="Servings">
-        <label for="recipe-img">Recipe Image</label>
-        <input type="file" name="recipe-img" class="new-recipe">
 
-        <div id="add-recipe-flex">
-            <div id="instructions-div">
-                <h6>Instructions:</h6>
-                <ol id="instructions">
-                    <li><input class="form-control" name="recipe-instructions" type="text"></li>
-                </ol>
-                <button class="btn btn-dark" id="add-instruction">+</button>
-                <button class="btn btn-dark" id="remove-instruction">-</button>
+        <div id="instructions-div">
+            <h5>Instructions:</h5>
+            <ol id="instructions">
+                <li><input class="form-control" name="recipe-instructions" type="text"></li>
+            </ol>
+            <button class="btn btn-dark" id="add-instruction">+</button>
+            <button class="btn btn-dark" id="remove-instruction">-</button>
+        </div>
+        <div>
+            <h5>Ingredients:</h5>
+            <ol id="ingredients">
+                <li><input class="form-control" name="recipe-ingredients" type="text"></li>
+            </ol>
+            <button class="btn btn-dark" id="add-ingredient">+</button>
+            <button class="btn btn-dark" id="remove-ingredient">-</button>
+        </div>
+
+        <div id="add-recipe-flex" class="add-recipe-details">
+            <div>
+                <label for="id_servings"><h5>Servings</h5></label>
+                {{ form.servings }}                
             </div>
             <div>
-                <h6>Ingredients:</h6>
-                <ol id="ingredients">
-                    <li><input class="form-control" name="recipe-ingredients" type="text"></li>
-                </ol>
-                <button class="btn btn-dark" id="add-ingredient">+</button>
-                <button class="btn btn-dark" id="remove-ingredient">-</button>
+                <label for="id_cooking_time"><h5>Cooking Time</h5></label>
+                {{ form.cooking_time }}                    
+            </div>
+            <div>
+                <label for="id-image"><h5>Recipe Image</h5></label>
+                {{ form.image }}   
             </div>
         </div>
+
         <input class="btn btn-primary" type="submit" name="" id="save-new-recipe" value="Add Recipe" disabled>
 
     </form>    

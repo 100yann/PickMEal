@@ -36,12 +36,25 @@ class Recipe(models.Model):
         return cls.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')[:num]
 
 
+
+def upload_location(instance, filename):
+    file, extension = filename.split('.')
+    return 'recipe_images/%s.%s' % (instance.title, extension)
+
 class UserRecipes(models.Model):
     title = models.CharField(max_length=255)
     ingredients = models.TextField()
     instructions = models.TextField()
     description = models.CharField(max_length=10000)
     servings = models.SmallIntegerField()
+    image = models.ImageField(upload_to=upload_location)
+    cooking_time = models.SmallIntegerField()
+
+    def __str__(self) -> str:
+        output = ''
+        for var in vars(self).values():
+            output += str(var) + '\n'
+        return output
 
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
@@ -49,6 +62,7 @@ class Rating(models.Model):
     rated_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
+# Model Forms
 class RegisterUser(forms.ModelForm):
     class Meta:
         model = User
@@ -64,5 +78,17 @@ class RegisterUser(forms.ModelForm):
             visible.field.widget.attrs['class'] = 'form-control'
         
         self.fields['email'].required = True
+
+
+class NewUserRecipe(forms.ModelForm):
+    class Meta:
+        model = UserRecipes
+        fields = ['title', 'description', 'image', 'servings', 'cooking_time']
+        widgets={
+                "title":forms.TextInput(attrs={'placeholder':'','name':'recipe-title','class':'form-control new-recipe'}),
+                "description":forms.Textarea(attrs={'placeholder':'','name':'recipe-description','class':'form-control new-recipe'}),
+                "servings": forms.NumberInput(attrs={'placeholder': '', 'class': 'form-control'}),
+                "cooking_time": forms.NumberInput(attrs={'placeholder': '', 'class': 'form-control'}),
+            }  
 
 

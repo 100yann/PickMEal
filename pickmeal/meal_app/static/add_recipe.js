@@ -2,8 +2,8 @@ var numInstructions = 1
 var numIngredients = 1
 
 document.addEventListener("DOMContentLoaded", () => {
-    const recipeTitle = document.getElementById('new-recipe-title')
-    const recipeDescr = document.getElementById('new-recipe-description')
+    const recipeTitle = document.getElementById('id_title')
+    const recipeDescr = document.getElementById('id_description')
 
     // Validate title length
     recipeTitle.addEventListener('keyup', () => {

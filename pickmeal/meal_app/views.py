@@ -3,7 +3,7 @@ from django.conf import settings
 import requests
 import json
 import os
-from .models import User, RegisterUser, Recipe, Rating
+from .models import User, RegisterUser, Recipe, Rating, NewUserRecipe, UserRecipes
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
 
@@ -255,24 +255,48 @@ def recipe(request, recipe_id):
 
 def new_recipe(request):
     if request.method == 'POST':
-        # get form data
-        title = request.POST.get('recipe-title')
-        description = request.POST.get('recipe-description')
-        servings = request.POST.get('recipe-servings')
-        img = request.POST.get('recipe-img')
-        
-        # Get instructions
-        instructions = request.POST.getlist('recipe-instructions')
+        form = NewUserRecipe(request.POST, request.FILES)
+        if form.is_valid():
+            # get form data
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            image = form.cleaned_data['image']
+            servings = form.cleaned_data['servings']
+            cooking_time = form.cleaned_data['cooking_time']
+            
+            # Get instructions
+            instructions = request.POST.getlist('recipe-instructions')
 
-        # Get ingredients
-        ingredients = request.POST.getlist('recipe-ingredients')
-        print(title, description, servings, instructions, ingredients, sep='\n')
-    return render(request, 'new_recipe.html')
+            # Get ingredients
+            ingredients = request.POST.getlist('recipe-ingredients')
+
+            recipe = UserRecipes(
+                title=title,
+                description=description,
+                image=image,
+                servings=servings,
+                cooking_time=cooking_time,
+                instructions=instructions,
+                ingredients=ingredients
+            )
+            recipe.save()
+            print(UserRecipes.objects.all())
+
+            print(title, description, servings, cooking_time, instructions, ingredients, image, sep='\n')
+        else:
+            print(form.errors)
+    form = NewUserRecipe()
+    return render(request, 
+                  'new_recipe.html', 
+                  context={
+                      'form': form})
 
 
 
 def user(request, id):
     recipes_saved = Recipe.objects.filter(users_who_saved=id)
-    return render(request, 'user.html', context={
+    return render(request, 
+                  'user.html', 
+                  context={
         'recipes': recipes_saved
     })
