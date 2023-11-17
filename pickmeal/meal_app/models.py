@@ -38,6 +38,9 @@ class Recipe(models.Model):
     def ingredientsToList(self):
         ingredients_set = eval(self.ingredients)
         return ', '.join(ingredients_set)
+    
+    def calculate_average_rating(self):
+        return self.ratings.aggregate(Avg('rating'))['rating__avg']
 
 def upload_location(instance, filename):
     file, extension = filename.split('.')
@@ -58,6 +61,10 @@ class UserRecipes(models.Model):
         for var in vars(self).values():
             output += str(var) + '\n'
         return output
+
+    def displayIngredients(self):
+        return self.ingredients.replace('[', '').replace(']', '').replace("'","")
+    
 
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')

@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block title %}Browse Recipes {% endblock %}
+
+{% block body %}
+<div class="results-heading">
+    <h1>Browse Recipes</h1>
+</div>
+<div class="container recipe-list" id="saved-recipes">
+    {% for recipe in recipes %}
+        <article>
+            <a href="{% url 'recipe' recipe_id=recipe.id %}" class="recipe-listing-link">
+                <div class="recipe-image">
+                    {% if recipe.created_by %}
+                        <img class="user-profile-recipe-img" src="{{ recipe.image.url }}" alt="recipe-image">
+                    {% else %}
+                        <img class="user-profile-recipe-img" src="{{ recipe.image }}" alt="recipe-image">
+                    {% endif %}
+                </div>
+                <div class="recipe-content">
+                    <h3 class="recipe-title">{{ recipe.title }}</h3>
+                    <div class="user-recipe-ingredients">
+                        <h6>Ingredients:</h6>
+                        {% if recipe.created_by %}
+                        <p>{{ recipe.displayIngredients }}</p>
+                        {% else %}
+                        <p>{{ recipe.ingredientsToList }}                           
+                        {% endif %}
+                    </div>
+                    {% if recipe.calculate_average_rating %}
+                        <div class="recipe-rating">
+                            <h6>Rating: {{ recipe.calculate_average_rating }}</h6>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </a>
+        </article>
+    {% endfor %}    
+</div>
+{% endblock %}

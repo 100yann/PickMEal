@@ -11,7 +11,8 @@ urlpatterns = [
     path('recipe/<int:recipe_id>', views.recipe, name='recipe'),
     path('results', views.results, name='recipe_results'),
     path('create', views.new_recipe, name='new_recipe'),
-    path('user/<int:id>', views.user, name='user')
+    path('user/<int:id>', views.user, name='user'),
+    path('browse', views.browse, name='browse')
 ]
 
 if settings.DEBUG:

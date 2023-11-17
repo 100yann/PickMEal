@@ -6,6 +6,8 @@ import os
 from .models import User, RegisterUser, Recipe, Rating, NewUserRecipe, UserRecipes
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
+from itertools import chain
+
 
 
 
@@ -308,3 +310,15 @@ def user(request, id):
                     'recipes': recipes_saved,
                     'user_recipes': user_recipes
                     })
+
+
+def browse(request):
+    recipes = Recipe.objects.all()
+    user_recipes = UserRecipes.objects.all()
+    final_set = list(chain(recipes, user_recipes))
+    
+    return render(request, 
+                  'browse.html', 
+                  context={
+                      'recipes': final_set
+                  })
