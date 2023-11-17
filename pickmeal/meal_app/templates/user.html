@@ -3,45 +3,47 @@
 {% block title %}{{ user }}{% endblock %}
 
 {% block body %}
-<div class="container">
+<div class="container user-container">
     <h1>{{ profile }}</h1>
 
     <div>
-        <button id="show-saved">Saved Recipes</button>
-        <button id="show-user">User Recipes</button>        
+        <button class="btn btn-primary" id="show-saved">Saved Recipes</button>
+        <button class="btn btn-primary" id="show-user">User Recipes</button>        
     </div>
-    <div id="saved-recipes">
-        {% for recipe in recipes %}
-            <div class="row">
-                <div class="col-lg-4 col-sm-12">
-                    <img class="recipe-listing-img" src="{{ recipe.image }}" alt="recipe-image">
-                </div>
-                <div class="col-lg-8 col-sm-12">
-                    <div class="recipe-card-title">
-                        <h3>{{ recipe.title }}</h3>
-                    </div>
-                    <div id="recipe-card-ings">
-                        <p>{{ recipe.description|safe }}</p>
-                    </div>
-                </div>
-            </div>  
-        {% endfor %}    
-    </div>
+        <div class="container recipe-list" id="saved-recipes">
+            {% for recipe in recipes %}
+                <article>
+                    <a href="{% url 'recipe' recipe_id=recipe.id %}" class="recipe-listing-link">
+                        <div class="recipe-image">
+                            <img class="user-profile-recipe-img" src="{{ recipe.image }}" alt="recipe-image">
+                        </div>
+                        <div class="recipe-content">
+                            <h3>{{ recipe.title }}</h3>
+                            <!-- <div class="user-recipe-ingredients">
+                                <h6>Ingredients:</h6>
+                                <p>{{ recipe.ingredientsToList }}                            
+                            </div> -->
+                        </div>
+                    </a>
+                </article>
+            {% endfor %}    
+        </div>
     <div id="user-recipes">
         {% for recipe in user_recipes %}
-            <div class="row">
-                <div class="col-lg-4 col-sm-12">
-                    <img class="recipe-listing-img" src="{{ recipe.image.url }}" alt="recipe-image">
-                </div>
-                <div class="col-lg-8 col-sm-12">
-                    <div class="recipe-card-title">
-                        <h3>{{ recipe.title }}</h3>
+            <article>
+                <a href="{% url 'recipe' recipe_id=recipe.id %}" class="recipe-listing-link">
+                    <div class="recipe-image">
+                        <img class="recipe-listing-img" src="{{ recipe.image.url }}" alt="recipe-image">
                     </div>
-                    <div id="recipe-card-ings">
-                        <p>{{ recipe.description|safe }}</p>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">{{ recipe.title }}</h3>
+                        <!-- <div class="user-recipe-ingredients">
+                            <h6>Ingredients:</h6>
+                            <p>{{ recipe.ingredients }}                        
+                        </div> -->
                     </div>
-                </div>
-            </div>  
+                </a>
+            </article>
         {% endfor %}
     </div>
 </div>
@@ -49,5 +51,5 @@
 
 
 {% block scripts %}
-<script src="{% static 'user_profile.js' %}"></script>
+    <script src="{% static 'user_profile.js' %}"></script>
 {% endblock %}

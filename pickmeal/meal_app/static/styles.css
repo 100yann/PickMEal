@@ -6,7 +6,7 @@ body{
     color: #609966!important;
 }
 
-.nav-item, #recipe-title, h4, h1, h2 {
+.nav-item, #recipe-title, h4, h1, h2, h3 {
     font-family: 'Paytone One';
 }
 .btn {
@@ -210,10 +210,23 @@ article {
 .recipe-save, .recipe-rate{
     margin: 5px 10px 25px;
 }
+
 /* USER PROFILE */
-.recipe-listing-img{
+.user-container{
+    text-align: center;
+    margin: auto;
+}
+.user-container h1, .user-container button{
+    margin-bottom: 15px;
+}
+
+.user-profile-recipe-img{
     width: 100%;
-    height: 100%;
+    height: auto;
+}
+.user-recipe-ingredients{
+    margin: auto;
+    width: 90%;
 }
 
 /* TOP RECIPES */

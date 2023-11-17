@@ -15,13 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         savedRecipes.parentElement.innerHTML += '<h3>No recipes added or saved yet.</h3>'
     }
+    
     showSavedRecipes.onclick = (() => {
          userRecipes.style.display = 'none'
-         savedRecipes.style.display = 'block'
+         savedRecipes.style.display = 'grid'
     })
 
     showUserRecipes.onclick = (() => {
-        userRecipes.style.display = 'block'
+        userRecipes.style.display = 'grid'
         savedRecipes.style.display = 'none'
     })
 })

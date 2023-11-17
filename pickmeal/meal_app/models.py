@@ -35,7 +35,9 @@ class Recipe(models.Model):
     def getTopRecipes(cls, num):
         return cls.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')[:num]
 
-
+    def ingredientsToList(self):
+        ingredients_set = eval(self.ingredients)
+        return ', '.join(ingredients_set)
 
 def upload_location(instance, filename):
     file, extension = filename.split('.')
