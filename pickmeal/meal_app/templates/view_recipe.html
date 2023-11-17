@@ -7,11 +7,15 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 recipe-body">
-            <img id="recipe-image" src="{{ image }}" alt="recipe-image">
-            <h1 id="recipe-title">{{ title }}</h1>
-            <p>{{ summary|safe }}</p>
+            {% if recipe.created_by %}
+                <img id="recipe-image" src="{{ recipe.recipedetails.upload_image.url }}" alt="recipe-image">
+            {% else %}
+                <img id="recipe-image" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
+            <!-- {% endif %} -->
+            <h1 id="recipe-title">{{ recipe.title }}</h1>
+            <p>{{ recipe.recipedetails.description|safe }}</p>
             <hr>
-            <h4>Servings: {{ servings }}</h4>
+            <h4>Servings: {{ recipe.recipedetails.servings }}</h4>
             {% if avg_rating %}
                 <h4>Average Rating: <span style="color: #609966">{{ avg_rating }}</span></h4>
             {% endif %} 
@@ -19,13 +23,13 @@
             <hr>
             <h4>Ingredients</h4>
             <ul>
-                {% for ing in ingredients %}
-                <li>{{ing}}</li>
+                {% for ing in recipe.recipedetails.ingredients_to_list %}
+                    <li>{{ ing }}</li>
                 {% endfor %}
             </ul>
             <hr>
             <h4>Instructions</h4>
-            {{ instructions|safe }}
+            {{ recipe.recipedetails.instructions|safe }}
             <hr>
     
     

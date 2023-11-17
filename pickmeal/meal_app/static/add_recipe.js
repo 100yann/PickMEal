@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const recipeTitle = document.getElementById('id_title')
     const recipeDescr = document.getElementById('id_description')
 
+
     // Validate title length
     recipeTitle.addEventListener('keyup', () => {
         const displayTitleChars = document.getElementById('char-count-title')

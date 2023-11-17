@@ -13,7 +13,7 @@
         {% csrf_token %}
         <label for="id_title"><h5>Title</h5></label>
         <div style="position: relative;">
-            {{ form.title }}
+            <input type="text" class="form-control" name="title" id="id_title">
             <span  class="char-count" id="char-count-title">0/75</span>
         </div>
 
@@ -51,7 +51,7 @@
             </div>
             <div>
                 <label for="id-image"><h5>Recipe Image</h5></label>
-                {{ form.image }}   
+                {{ form.upload_image }}   
             </div>
         </div>
 

@@ -13,7 +13,7 @@ function displayTopRated() {
     recipes.sort((a, b) => {
         const ratingA = parseFloat(a.querySelector('#rating')?.dataset.rating || 0);
         const ratingB = parseFloat(b.querySelector('#rating')?.dataset.rating || 0);
-        return ratingB - ratingA; // Sort in descending order
+        return ratingB - ratingA;
     });
 
     recipes.forEach((recipe) => {

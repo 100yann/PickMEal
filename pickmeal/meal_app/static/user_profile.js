@@ -10,13 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (numSavedRecipes > numUserRecipes){
         userRecipes.style.display = 'none'
-    } else if (numSavedRecipes < numUserRecipes) {
+    } else if (numSavedRecipes < numUserRecipes || numSavedRecipes === numUserRecipes) {
         savedRecipes.style.display = 'none'
     } else {
         savedRecipes.parentElement.innerHTML += '<h3>No recipes added or saved yet.</h3>'
     }
     
     showSavedRecipes.onclick = (() => {
+        console.log('asd')
          userRecipes.style.display = 'none'
          savedRecipes.style.display = 'grid'
     })

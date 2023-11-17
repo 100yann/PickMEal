@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django import forms
 from django.db.models import Avg
+import json
 
 
 # Create your models here.
@@ -17,14 +18,14 @@ class User(AbstractUser):
         return self.username
     
 
+def upload_location(instance, filename):
+    file, extension = filename.split('.')
+    return 'recipe_images/%s.%s' % (instance.recipe.title, extension)
+
 class Recipe(models.Model):
-    id = models.IntegerField(primary_key=True)
-    title = models.CharField(max_length=255)
-    ingredients = models.TextField(blank=True)
-    instructions = models.TextField(blank=True, null=True)
-    description = models.CharField(blank=True, max_length=10000)
-    servings = models.SmallIntegerField(blank=True)
-    image = models.URLField(blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    spoonacular_id = models.IntegerField(blank=True, null=True)
+    title = models.CharField(max_length=75)
     added_on = models.DateField(auto_now=True)
 
     @classmethod
@@ -35,35 +36,27 @@ class Recipe(models.Model):
     def getTopRecipes(cls, num):
         return cls.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')[:num]
 
-    def ingredientsToList(self):
-        ingredients_set = eval(self.ingredients)
-        return ', '.join(ingredients_set)
-    
+
     def calculate_average_rating(self):
         return self.ratings.aggregate(Avg('rating'))['rating__avg']
 
-def upload_location(instance, filename):
-    file, extension = filename.split('.')
-    return 'recipe_images/%s.%s' % (instance.title, extension)
 
-class UserRecipes(models.Model):
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    ingredients = models.TextField()
-    instructions = models.TextField()
-    description = models.CharField(max_length=10000)
-    servings = models.SmallIntegerField()
-    image = models.ImageField(upload_to=upload_location)
+class RecipeDetails(models.Model):
+    recipe = models.OneToOneField(Recipe, on_delete=models.CASCADE)
+    ingredients = models.TextField(blank=True)
+    instructions = models.TextField(blank=True, null=True)
+    description = models.CharField(blank=True, max_length=10000)
     cooking_time = models.SmallIntegerField()
+    servings = models.SmallIntegerField(blank=True)
+    image = models.URLField(blank=True, null=True)
+    upload_image = models.ImageField(upload_to=upload_location, blank=True, null=True)
 
-    def __str__(self) -> str:
-        output = ''
-        for var in vars(self).values():
-            output += str(var) + '\n'
-        return output
-
-    def displayIngredients(self):
-        return self.ingredients.replace('[', '').replace(']', '').replace("'","")
+    def ingredients_to_list(self):
+        replacements = {"[": "{", "]":"}", '"': "'", "{'": "", "'}": ""}
+        cleaned_string = self.ingredients
+        for old, new in replacements.items():
+            cleaned_string = cleaned_string.replace(old, new)
+        return cleaned_string.split("', '")
     
 
 class Rating(models.Model):
@@ -90,15 +83,15 @@ class RegisterUser(forms.ModelForm):
         self.fields['email'].required = True
 
 
-class NewUserRecipe(forms.ModelForm):
+class NewRecipe(forms.ModelForm):
+
     class Meta:
-        model = UserRecipes
-        fields = ['title', 'description', 'image', 'servings', 'cooking_time']
+        model = RecipeDetails
+        fields = ['servings', 'cooking_time', 'description', 'upload_image']
         widgets={
-                "title":forms.TextInput(attrs={'placeholder':'','name':'recipe-title','class':'form-control new-recipe'}),
-                "description":forms.Textarea(attrs={'placeholder':'','name':'recipe-description','class':'form-control new-recipe'}),
-                "servings": forms.NumberInput(attrs={'placeholder': '', 'class': 'form-control'}),
-                "cooking_time": forms.NumberInput(attrs={'placeholder': '', 'class': 'form-control'}),
+                'cooking_time': forms.NumberInput(attrs={'class': 'form-control'}),
+                'servings': forms.NumberInput(attrs={'class': 'form-control'}),
+                'description': forms.Textarea(attrs={'placeholder': '', 'class': 'form-control'})
             }  
 
 

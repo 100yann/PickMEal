@@ -3,10 +3,10 @@ from django.conf import settings
 import requests
 import json
 import os
-from .models import User, RegisterUser, Recipe, Rating, NewUserRecipe, UserRecipes
+from .models import User, RegisterUser, Recipe, Rating, NewRecipe, RecipeDetails
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
-from itertools import chain
+import time
 
 
 
@@ -63,7 +63,7 @@ def recipeInformation(recipe_id):
         response = requests.get(url, params=params)
         if response.status_code == 200:
             data = response.json()
-            
+
             # format instructions
             instructions = data['instructions']
             fields = {
@@ -85,6 +85,7 @@ def recipeInformation(recipe_id):
                 'image': data['image'],
                 'servings': data['servings'],
                 'summary': data['summary'],
+                'cooking_time': data['readyInMinutes'],
                 'instructions': instructions,
                 # sometimes the API returns duplicate ingredients so ingredients is now a set instead of list
                 'ingredients': set(ing['originalName'].capitalize() for ing in data['extendedIngredients'])
@@ -162,7 +163,7 @@ def results(request):
         recipe_ids = [recipes[key]['id'] for key in recipes.keys()]
 
         # Get recipies with the specified IDs and their ratings
-        recipes_with_ratings = Recipe.objects.filter(id__in=recipe_ids).annotate(avg_rating=Avg('ratings__rating'))
+        recipes_with_ratings = Recipe.objects.filter(spoonacular_id__in=recipe_ids).annotate(avg_rating=Avg('ratings__rating'))
         
         # Get ID and avg rating of each recipe object
         recipe_ratings = {recipe.id: recipe.avg_rating for recipe in recipes_with_ratings}
@@ -186,22 +187,37 @@ def recipe(request, recipe_id):
     else:
         user = False
 
-    # get recipe details
-    recipe_data = recipeInformation(recipe_id)
-    if Recipe.objects.filter(id=recipe_id).exists():
-        recipe = Recipe.objects.get(id=recipe_id)
+    # if recipe is already saved in database get the data from the db
+    if Recipe.objects.filter(spoonacular_id=recipe_id).exists():
+        recipe = Recipe.objects.get(spoonacular_id=recipe_id)
+
+    elif Recipe.objects.filter(pk=recipe_id).exists():
+        recipe = Recipe.objects.get(pk=recipe_id)
+
     else:
-        recipe = Recipe.objects.create(id=recipe_id, 
+        # get recipe details
+        recipe_data = recipeInformation(recipe_id)
+
+        # save recipe to database
+        recipe = Recipe.objects.create(spoonacular_id=recipe_id, 
                                         title=recipe_data['title'],
-                                        ingredients=recipe_data['ingredients'],
-                                        instructions = recipe_data['instructions'],
-                                        description=recipe_data['summary'],
-                                        servings=recipe_data['servings'],
-                                        image=recipe_data['image'])
+                                        )
+                    
+        # save recipe details to database
+        recipe_details = RecipeDetails.objects.create(recipe=recipe,
+                                                    ingredients=recipe_data['ingredients'],
+                                                    instructions=recipe_data['instructions'],
+                                                    description=recipe_data['summary'],
+                                                    cooking_time=recipe_data['cooking_time'],
+                                                    image=recipe_data['image'],
+                                                    servings=recipe_data['servings'],
+                                                    )
+        
+        recipe = Recipe.objects.get(spoonacular_id=recipe_id)
 
     if request.method == 'POST':
         data = json.loads(request.body)
-        # handle requests that pass if save recipe data
+        # handle saving the recipe
         if 'status' in data:
             is_saved = data.get('status')
             if is_saved == 'false':
@@ -210,7 +226,7 @@ def recipe(request, recipe_id):
                 user.saved_recipes.remove(recipe.pk)
             return HttpResponse()
         
-        # handle requests that pass rating data
+        # handle rating the recipe
         elif 'rating' in data:
             new_user_rating = data.get('rating')
             recipe_rating = Rating.objects.filter(recipe=recipe, rated_by=user).first()
@@ -225,7 +241,7 @@ def recipe(request, recipe_id):
 
     # check if the current user has saved this recipe
     if user:
-        if user.saved_recipes.filter(id=recipe_id).exists():
+        if user.saved_recipes.filter(id=recipe.pk).exists():
             recipe_saved = True
         else:
             recipe_saved = False
@@ -244,26 +260,30 @@ def recipe(request, recipe_id):
         else:
             user_rating = False
     else:
-        user_rating = False   
+        user_rating = False  
 
+    
     # add necessary fields to recipe_data
-    recipe_data['recipe_saved'] = recipe_saved
-    recipe_data['user_rating'] = user_rating
-    recipe_data['avg_rating'] = avg_rating['rating__avg']
-    recipe_data['top_recipes'] = Recipe.getTopRecipes(num=3)
-    recipe_data['recent_recipes'] = Recipe.getRecentRecipes(num=3)
-    return render(request, 'view_recipe.html', recipe_data)
+    # recipe_data['top_recipes'] = Recipe.getTopRecipes(num=3)
+    # recipe_data['recent_recipes'] = Recipe.getRecentRecipes(num=3)
+    return render(request, 'view_recipe.html', context={
+        'recipe': recipe,
+        'recipe_saved': recipe_saved,
+        'user_rating': user_rating,
+        'avg_rating': avg_rating['rating__avg']
+
+    })
 
 
 def new_recipe(request):
     if request.method == 'POST':
-        form = NewUserRecipe(request.POST, request.FILES)
+        form = NewRecipe(request.POST, request.FILES)
         if form.is_valid():
 
             # get form data
-            title = form.cleaned_data['title']
+            title = request.POST.get('title')
             description = form.cleaned_data['description']
-            image = form.cleaned_data['image']
+            image = form.cleaned_data['upload_image']
             servings = form.cleaned_data['servings']
             cooking_time = form.cleaned_data['cooking_time']
             
@@ -275,23 +295,26 @@ def new_recipe(request):
 
             # Get current user
             user_instance = User.objects.get(pk=request.user.id)
-            recipe = UserRecipes(
+
+            recipe = Recipe.objects.create(
                 created_by=user_instance,
                 title=title,
-                description=description,
-                image=image,
-                servings=servings,
-                cooking_time=cooking_time,
-                instructions=instructions,
-                ingredients=ingredients
             )
-            recipe.save()
-            print(UserRecipes.objects.all())
+            recipe_instance = Recipe.objects.get(pk=recipe.pk)
+            RecipeDetails.objects.create(
+                recipe=recipe_instance,
+                ingredients=ingredients,
+                instructions=instructions,
+                description=description,
+                cooking_time=cooking_time,
+                servings=servings,
+                upload_image=image,
+            )
 
-            print(title, description, servings, cooking_time, instructions, ingredients, image, sep='\n')
+            return redirect('recipe', recipe.pk)
         else:
             print(form.errors)
-    form = NewUserRecipe()
+    form = NewRecipe()
     return render(request, 
                   'new_recipe.html', 
                   context={
@@ -301,7 +324,7 @@ def new_recipe(request):
 
 def user(request, id):
     recipes_saved = Recipe.objects.filter(users_who_saved=id)
-    user_recipes = UserRecipes.objects.filter(created_by=id)
+    user_recipes = Recipe.objects.filter(created_by=id)
     user = User.objects.get(pk=id)
     return render(request, 
                   'user.html',      
@@ -314,11 +337,9 @@ def user(request, id):
 
 def browse(request):
     recipes = Recipe.objects.all()
-    user_recipes = UserRecipes.objects.all()
-    final_set = list(chain(recipes, user_recipes))
     
     return render(request, 
                   'browse.html', 
                   context={
-                      'recipes': final_set
+                      'recipes': recipes
                   })

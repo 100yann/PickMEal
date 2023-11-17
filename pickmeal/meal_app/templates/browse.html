@@ -13,29 +13,22 @@
 <div class="container recipe-list" id="saved-recipes">
     {% for recipe in recipes %}
         <article id="recipe-card">
-            <a href="{% url 'recipe' recipe_id=recipe.id %}" class="recipe-listing-link">
+            <a href="{% url 'recipe' recipe_id=recipe.spoonacular_id %}" class="recipe-listing-link">
                 <div class="recipe-image">
                     {% if recipe.created_by %}
                         <img class="user-profile-recipe-img" src="{{ recipe.image.url }}" alt="recipe-image">
                     {% else %}
-                        <img class="user-profile-recipe-img" src="{{ recipe.image }}" alt="recipe-image">
+                        <img class="user-profile-recipe-img" src="{{ recipe.recipedetails_set.get.image }}" alt="recipe-image">
                     {% endif %}
                 </div>
                 <div class="recipe-content">
                     <h3 class="recipe-title">{{ recipe.title }}</h3>
-                    <div class="user-recipe-ingredients">
-                        <h6>Ingredients:</h6>
-                        {% if recipe.created_by %}
-                        <p>{{ recipe.displayIngredients }}</p>
-                        {% else %}
-                        <p>{{ recipe.ingredientsToList }}                           
-                        {% endif %}
-                    </div>
-                    {% if recipe.calculate_average_rating %}
-                        <div class="recipe-rating">
+                    <div class="recipe-rating">
+                        {% if recipe.calculate_average_rating %}
                             <h6 id="rating" data-rating="{{ recipe.calculate_average_rating }}">Rating: {{ recipe.calculate_average_rating }}</h6>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                        <h6>Servings: {{ recipe.recipedetails_set.get.servings }}</h6>
+                    </div>
 
                 </div>
             </a>

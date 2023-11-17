@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% load static %}
-{% block title %}{{ user }}{% endblock %}
+{% block title %}{{ profile }}{% endblock %}
 
 {% block body %}
 <div class="container user-container">
@@ -13,16 +13,12 @@
         <div class="container recipe-list" id="saved-recipes">
             {% for recipe in recipes %}
                 <article>
-                    <a href="{% url 'recipe' recipe_id=recipe.id %}" class="recipe-listing-link">
+                    <a href="{% url 'recipe' recipe_id=recipe.spoonacular_id %}" class="recipe-listing-link">
                         <div class="recipe-image">
-                            <img class="user-profile-recipe-img" src="{{ recipe.image }}" alt="recipe-image">
+                            <img class="user-profile-recipe-img" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
                         </div>
                         <div class="recipe-content">
                             <h3>{{ recipe.title }}</h3>
-                            <!-- <div class="user-recipe-ingredients">
-                                <h6>Ingredients:</h6>
-                                <p>{{ recipe.ingredientsToList }}                            
-                            </div> -->
                         </div>
                     </a>
                 </article>
@@ -33,14 +29,10 @@
             <article>
                 <a href="{% url 'recipe' recipe_id=recipe.id %}" class="recipe-listing-link">
                     <div class="recipe-image">
-                        <img class="recipe-listing-img" src="{{ recipe.image.url }}" alt="recipe-image">
+                        <img class="recipe-listing-img" src="{{ recipe.recipedetails.upload_image.url }}" alt="recipe-image">
                     </div>
                     <div class="recipe-content">
                         <h3 class="recipe-title">{{ recipe.title }}</h3>
-                        <!-- <div class="user-recipe-ingredients">
-                            <h6>Ingredients:</h6>
-                            <p>{{ recipe.ingredients }}                        
-                        </div> -->
                     </div>
                 </a>
             </article>

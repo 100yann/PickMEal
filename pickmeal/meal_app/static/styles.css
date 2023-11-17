@@ -216,6 +216,7 @@ article {
     text-align: center;
     margin: auto;
 }
+
 .user-container h1, .user-container button{
     margin-bottom: 15px;
 }
@@ -319,11 +320,17 @@ label h5 {
 /* BROWSE */
 article{
     position: relative;
-    padding-bottom: 35px;
+    padding-bottom: 15px;
 }
 .recipe-rating{
-    padding-left: 16px;
-    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    width: 100%;
     position: absolute;
-    top: 95%;
+    top: 92%;
+    left: 0;
+}
+.recipe-rating h6{
+    margin: auto;
 }
