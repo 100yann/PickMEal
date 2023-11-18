@@ -22,6 +22,7 @@ def upload_location(instance, filename):
     file, extension = filename.split('.')
     return 'recipe_images/%s.%s' % (instance.recipe.title, extension)
 
+
 class Recipe(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     spoonacular_id = models.IntegerField(blank=True, null=True)
@@ -35,7 +36,6 @@ class Recipe(models.Model):
     @classmethod
     def getTopRecipes(cls, num):
         return cls.objects.annotate(avg_rating=Avg('ratings__rating')).order_by('-avg_rating')[:num]
-
 
     def calculate_average_rating(self):
         return self.ratings.aggregate(Avg('rating'))['rating__avg']
@@ -58,6 +58,9 @@ class RecipeDetails(models.Model):
             cleaned_string = cleaned_string.replace(old, new)
         return cleaned_string.split("', '")
     
+    def instructions_to_list(self):
+        cleaned_instructions = self.instructions.replace("['", '').replace("']", '')
+        return cleaned_instructions.split("', '")
 
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')

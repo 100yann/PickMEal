@@ -29,7 +29,15 @@
             </ul>
             <hr>
             <h4>Instructions</h4>
-            {{ recipe.recipedetails.instructions|safe }}
+            {% if not recipe.created_by %}
+                {{ recipe.recipedetails.instructions|safe }}
+            {% else %}
+                <ol>
+                {% for step in recipe.recipedetails.instructions_to_list %}
+                    <li>{{ step }}</li>
+                {% endfor %}
+                </ol>
+            {% endif %}
             <hr>
     
     
