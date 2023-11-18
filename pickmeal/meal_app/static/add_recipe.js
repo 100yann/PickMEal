@@ -2,22 +2,27 @@ var numInstructions = 1
 var numIngredients = 1
 
 document.addEventListener("DOMContentLoaded", () => {
+
+
     const recipeTitle = document.getElementById('id_title')
     const recipeDescr = document.getElementById('id_description')
+    
+    const recipeForm = document.getElementById('recipe-form')
+    // check if all fields are filled in. If true the submit button will be active
+    recipeForm.addEventListener('input', () => {
+        checkInput(recipeTitle, recipeDescr)});
 
 
     // Validate title length
     recipeTitle.addEventListener('keyup', () => {
         const displayTitleChars = document.getElementById('char-count-title')
-        checkInput(recipeDescr, recipeTitle)
-        calcInput(recipeTitle, displayTitleChars, 75)
+        displayAmountOfCharacters(recipeTitle, displayTitleChars, 75)
     })
 
     // Validate description length 
     recipeDescr.addEventListener('keyup', () => {
         const displayDescrChars = document.getElementById('char-count-description')
-        checkInput(recipeDescr, recipeTitle)
-        calcInput(recipeDescr, displayDescrChars, 300)
+        displayAmountOfCharacters(recipeDescr, displayDescrChars, 1000)
     })
 
     // Add new instruction step field
@@ -43,28 +48,54 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 })
 
-// If title and description have values make the submit button active
-function checkInput(element1, element2){
-    if (element1.value.length > 0 && element2.value.length > 0){
-        document.getElementById('save-new-recipe').disabled = false;
-    } else {
-        document.getElementById('save-new-recipe').disabled = true;
-    }
+// Check if all fields are filled
+function checkInput(recipeTitle, recipeDescr){
+
+    // By default tje submit button is active
+    const submitButton = document.getElementById('save-new-recipe')
+    submitButton.disabled = false;
+
+    const titleValue = recipeTitle.value
+    const descriptionValue = recipeDescr.value
+    const instructionsValue = document.getElementById('recipe-instructions').value
+    const ingredientsValue = document.getElementById('recipe-ingredients').value
+    const servingsValue = document.getElementById('id_servings').value
+    const cookingTimeValue = document.getElementById('id_cooking_time').value
+    const recipeImage = document.getElementById('id_upload_image').value
+    const validateFields = [titleValue, descriptionValue, instructionsValue, ingredientsValue, servingsValue, cookingTimeValue, recipeImage]
+    console.log(servingsValue)
+    // if there's an empty field disable the button
+    validateFields.some(element => {
+        if (element === ''){
+            submitButton.disabled = true;
+        }
+        if (servingsValue < 0 || cookingTimeValue < 0){
+            submitButton.disabled = true;
+        }
+
+        // Check title length
+        if (titleValue.length > 75){
+            recipeTitle.style.border = '2px solid red'
+            submitButton.disabled = true;
+        } else if (titleValue.length < 75) {
+            recipeTitle.style.border = '1px solid rgb(206, 212, 218)'
+        }
+
+        // Check description length
+        if (descriptionValue.length > 1000){
+            recipeDescr.style.border = '2px solid red'
+            submitButton.disabled = true;
+        } else if (descriptionValue.length < 1000){
+            recipeDescr.style.border = '1px solid rgb(206, 212, 218)'
+        }
+    })
 }
 
-// Check if a field has more than the maxChars inputted
-function calcInput(elementToCheck, elementToDisplay, maxChars){
-    const submitButton = document.getElementById('save-new-recipe')
-
+// Display the amount of chars inputted in title and description
+function displayAmountOfCharacters(elementToCheck, elementToDisplay, maxChars){
     var charNums = elementToCheck.value.length
     elementToDisplay.textContent = `${charNums}/${maxChars}`;
 
-    if (charNums > maxChars ){
-        elementToCheck.style.border = '2px solid red'
-        submitButton.disabled = true;
-    } else if (charNums < maxChars) {
-        elementToCheck.style.border = '1px solid rgb(206, 212, 218)'
-    }
 }
 
 // Add a new list element to instructions/ingredients

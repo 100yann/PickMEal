@@ -267,7 +267,10 @@ article {
 }
 .new-recipe{
     margin: 0 auto;
-    padding-right: 70px;
+    padding-right: 80px;
+}
+.char-count {
+    margin-right: 10px;
 }
 #instructions-div{
     margin: 25px auto;

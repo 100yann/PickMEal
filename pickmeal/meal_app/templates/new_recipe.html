@@ -9,24 +9,24 @@
     <h6>All fields are required</h6>
 </div>
 <div class="container new-recipe-container">
-    <form action="{% url 'new_recipe' %}" class="form" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'new_recipe' %}" id="recipe-form" class="form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="id_title"><h5>Title</h5></label>
         <div style="position: relative;">
-            <input type="text" class="form-control" name="title" id="id_title">
+            <input type="text" class="form-control new-recipe" name="title" id="id_title">
             <span  class="char-count" id="char-count-title">0/75</span>
         </div>
 
         <label for="id_description"><h5>Description</h5></label>
         <div style="position:relative;">
             {{ form.description }}
-            <span class="char-count" id="char-count-description">0/300</span>
+            <span class="char-count" id="char-count-description">0/1000</span>
         </div>
 
         <div id="instructions-div">
             <h5>Instructions:</h5>
             <ol id="instructions">
-                <li><input class="form-control" name="recipe-instructions" type="text"></li>
+                <li><input class="form-control" name="recipe-instructions" type="text" id="recipe-instructions"></li>
             </ol>
             <button class="btn btn-dark" id="add-instruction">+</button>
             <button class="btn btn-dark" id="remove-instruction">-</button>
@@ -34,7 +34,7 @@
         <div>
             <h5>Ingredients:</h5>
             <ol id="ingredients">
-                <li><input class="form-control" name="recipe-ingredients" type="text"></li>
+                <li><input class="form-control" name="recipe-ingredients" type="text" id="recipe-ingredients"></li>
             </ol>
             <button class="btn btn-dark" id="add-ingredient">+</button>
             <button class="btn btn-dark" id="remove-ingredient">-</button>

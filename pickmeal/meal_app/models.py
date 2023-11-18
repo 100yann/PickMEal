@@ -94,7 +94,7 @@ class NewRecipe(forms.ModelForm):
         widgets={
                 'cooking_time': forms.NumberInput(attrs={'class': 'form-control'}),
                 'servings': forms.NumberInput(attrs={'class': 'form-control'}),
-                'description': forms.Textarea(attrs={'placeholder': '', 'class': 'form-control'})
+                'description': forms.Textarea(attrs={'placeholder': '', 'class': 'form-control new-recipe'})
             }  
 
 
