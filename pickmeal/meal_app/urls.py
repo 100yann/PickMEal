@@ -1,10 +1,13 @@
 from django.urls import path
 from . import views
+from django.views.generic.base import RedirectView
+
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', views.index, name='home'),
+    path('', RedirectView.as_view(url='home'), name='index'),
+    path('home', views.index, name='home'),
     path('register', views.register, name='register'),
     path('login', views.log_in, name='login'),
     path('logout', views.log_out, name='logout'),
