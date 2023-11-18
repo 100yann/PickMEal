@@ -8,7 +8,9 @@
     <h1>Browse Recipes</h1>
 </div>
 <div id="filters">
-    <button id="top-rated-btn">Top rated</button>
+    <button id="top-rated-btn">Top Rated</button>
+    <button id="recently-added-btn">Recently Added</button>
+
 </div>
 <div class="container recipe-list" id="saved-recipes">
     {% for recipe in recipes %}
@@ -27,13 +29,14 @@
                 </div>
                 <div class="recipe-content">
                     <h3 class="recipe-title">{{ recipe.title }}</h3>
+                    <p hidden id="added-on" data-added-on='{{ recipe.added_on|date:"c" }}'></p>
+
                     <div class="recipe-rating">
                         {% if recipe.calculate_average_rating %}
                             <h6 id="rating" data-rating="{{ recipe.calculate_average_rating }}">Rating: {{ recipe.calculate_average_rating }}</h6>
                         {% endif %}
                         <h6>Servings: {{ recipe.recipedetails.servings }}</h6>
                     </div>
-
                 </div>
             </a>
         </article>

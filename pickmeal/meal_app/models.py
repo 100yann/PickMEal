@@ -27,7 +27,7 @@ class Recipe(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     spoonacular_id = models.IntegerField(blank=True, null=True)
     title = models.CharField(max_length=75)
-    added_on = models.DateField(auto_now=True)
+    added_on = models.DateTimeField(auto_now=True)
 
     @classmethod
     def getRecentRecipes(cls, num):
