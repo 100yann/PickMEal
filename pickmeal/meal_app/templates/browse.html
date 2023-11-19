@@ -10,6 +10,8 @@
 <div id="filters">
     <button id="top-rated-btn">Top Rated</button>
     <button id="recently-added-btn">Recently Added</button>
+    <button id="vegan">Vegan</button>
+    <button id="vegetarian">Vegetarian</button>
 
 </div>
 <div class="container recipe-list" id="saved-recipes">
@@ -30,6 +32,7 @@
                 <div class="recipe-content">
                     <h3 class="recipe-title">{{ recipe.title }}</h3>
                     <p hidden id="added-on" data-added-on='{{ recipe.added_on|date:"c" }}'></p>
+                    <p hidden id="is-vegan" data-vegan='{{ recipe.recipedietarytags.vegan }}'></p>
 
                     <div class="recipe-rating">
                         {% if recipe.calculate_average_rating %}

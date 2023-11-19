@@ -1,15 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // filter by top rated recipes
     const buttonTopRated = document.getElementById('top-rated-btn')
     buttonTopRated.onclick = ((event) => {
         event.preventDefault()
         displayTopRated()
     })
 
+    // filter by recently added recipes
     const buttonRecentlyAdded = document.getElementById('recently-added-btn')
     buttonRecentlyAdded.onclick = ((event) => {
-        console.log('clicked')
         event.preventDefault()
         displayRecentlyAdded()
+    })
+
+    // show only vegan recipes
+    const buttonVegan = document.getElementById('vegan')
+    buttonVegan.onclick = ((event) => {
+        event.preventDefault()
+        displayByTag('vegan')
     })
 })
 
@@ -24,6 +32,9 @@ function displayTopRated() {
     });
 
     recipes.forEach((recipe) => {
+        if (recipe.hidden){
+            recipe.hidden = false;
+        }
         recipesContainer.appendChild(recipe);
     });
 }
@@ -46,6 +57,23 @@ function displayRecentlyAdded() {
     });
 
     recipes.forEach((recipe) => {
+        if (recipe.hidden){
+            recipe.hidden = false;
+        }
         recipesContainer.appendChild(recipe);
     });
+}
+
+
+function displayByTag(tag){
+    const recipesContainer = document.getElementById('saved-recipes');
+    const recipes = Array.from(document.querySelectorAll('#recipe-card'));
+    recipes.forEach((recipe) => {
+        const recipeTag = recipe.querySelector(`#is-${tag}`)
+        const recipeTagValue = recipeTag.dataset[tag]
+
+        if (!recipeTagValue){
+            recipe.hidden = true;
+        }
+    })
 }
