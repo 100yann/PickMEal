@@ -3,13 +3,10 @@ from django.conf import settings
 import requests
 import json
 import os
-from .models import User, RegisterUser, Recipe, Rating, NewRecipe, RecipeDetails
+from .models import User, RegisterUser, Recipe, Rating, NewRecipe, RecipeDetails, RecipeDietaryTags
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
 import time
-
-
-
 
 
 def getRecipes(ingredients):
@@ -53,6 +50,32 @@ def getRecipes(ingredients):
     return results
 
 
+# format recipe instructions
+def format_instructions(instructions):
+    fields = {
+        'instructions': '',
+        'Instructions': '',
+        '\n\n': '',
+    }
+    if instructions:
+        for key, value in fields.items():
+            instructions = instructions.replace(key, value)
+        
+        # make the instructions into an ordered list if they aren't already
+        if '<ol>' not in instructions and '<p>' not in instructions:
+            instructions = "<ol><li>" + instructions.replace("\n", "</li><li>") + "</li></ol>"
+    return instructions
+
+
+# format recipe ingredients
+def format_ingredients(ingredients):
+    # sometimes the API returns duplicate ingredients so ingredients 
+    # is now a set instead of list
+    return set(ing['originalName'].capitalize() for ing in ingredients)
+
+
+# get detailed recipe information from
+# spoonacular API
 def recipeInformation(recipe_id):
     url = f'https://api.spoonacular.com/recipes/{recipe_id}/information'
     api_key = settings.SPOONACULAR_API_KEY
@@ -63,22 +86,6 @@ def recipeInformation(recipe_id):
         response = requests.get(url, params=params)
         if response.status_code == 200:
             data = response.json()
-
-            # format instructions
-            instructions = data['instructions']
-            fields = {
-                'instructions': '',
-                'Instructions': '',
-                '\n\n': '',
-            }
-            if instructions:
-                for key, value in fields.items():
-                    instructions = instructions.replace(key, value)
-                
-                # make the instructions into an ordered list if they aren't already
-                if '<ol>' not in instructions and '<p>' not in instructions:
-                    instructions = "<ol><li>" + instructions.replace("\n", "</li><li>") + "</li></ol>"
-
             recipe_data = {
                 'id': recipe_id,
                 'title': data['title'],
@@ -86,9 +93,12 @@ def recipeInformation(recipe_id):
                 'servings': data['servings'],
                 'summary': data['summary'],
                 'cooking_time': data['readyInMinutes'],
-                'instructions': instructions,
-                # sometimes the API returns duplicate ingredients so ingredients is now a set instead of list
-                'ingredients': set(ing['originalName'].capitalize() for ing in data['extendedIngredients'])
+                'instructions': format_instructions(data['instructions']),
+                'ingredients': format_ingredients(data['extendedIngredients']),
+                'dietary_tags': {'vegetarian': data['vegetarian'],
+                                 'vegan': data['vegan'],
+                                 'dairy_free': data['dairyFree'],
+                                 'gluten_free': data['glutenFree']}
                 }
             return recipe_data
     except requests.exceptions.RequestException as e:
@@ -121,6 +131,7 @@ def log_in(request):
             })
     return render(request, 'sign_in.html')
 
+
 def register(request):
     if request.method == 'POST':
         form = RegisterUser(request.POST)
@@ -148,6 +159,7 @@ def register(request):
     return render(request, 'register.html', {
         'form': form
     })
+
 
 def results(request):
     if request.method == 'POST':
@@ -212,7 +224,13 @@ def recipe(request, recipe_id):
                                                     image=recipe_data['image'],
                                                     servings=recipe_data['servings'],
                                                     )
-        
+        # save recipe's dietary tags to database
+        recipe_dietary_tags = RecipeDietaryTags.objects.create(recipe=recipe,
+                                                                vegetarian=recipe_data['dietary_tags']['vegetarian'],
+                                                                vegan=recipe_data['dietary_tags']['vegan'],
+                                                                dairy_free=recipe_data['dietary_tags']['dairy_free'],
+                                                                gluten_free=recipe_data['dietary_tags']['gluten_free'],
+                                                                )
         recipe = Recipe.objects.get(spoonacular_id=recipe_id)
 
     if request.method == 'POST':
@@ -319,7 +337,6 @@ def new_recipe(request):
                   'new_recipe.html', 
                   context={
                       'form': form})
-
 
 
 def user(request, id):

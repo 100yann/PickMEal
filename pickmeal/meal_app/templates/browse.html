@@ -22,9 +22,9 @@
             {% endif %}
                 <div class="recipe-image">
                     {% if not recipe.created_by %}
-                        <img class="user-profile-recipe-img" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
+                        <img class="recipe-card-img" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
                     {% else %}
-                        <img class="user-profile-recipe-img" src="{{ recipe.recipedetails.upload_image.url }}" alt="recipe-image">
+                        <img class="recipe-card-img" src="{{ recipe.recipedetails.upload_image.url }}" alt="recipe-image">
                     {% endif %}
                 </div>
                 <div class="recipe-content">

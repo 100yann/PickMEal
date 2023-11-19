@@ -62,6 +62,15 @@ class RecipeDetails(models.Model):
         cleaned_instructions = self.instructions.replace("['", '').replace("']", '')
         return cleaned_instructions.split("', '")
 
+
+class RecipeDietaryTags(models.Model):
+    recipe = models.OneToOneField(Recipe, on_delete=models.CASCADE)
+    vegetarian = models.BooleanField(null=True)
+    vegan = models.BooleanField(null=True)
+    dairy_free = models.BooleanField(null=True)
+    gluten_free = models.BooleanField(null=True)
+
+
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
     rating = models.IntegerField()

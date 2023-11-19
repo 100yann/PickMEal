@@ -122,7 +122,10 @@ body{
     color: #ffffff;
 }
 
-
+.recipe-card-img{
+    width: 312px;
+    height: 231px;
+}
 .recipe-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -221,10 +224,7 @@ article {
     margin-bottom: 15px;
 }
 
-.user-profile-recipe-img{
-    width: 100%;
-    height: auto;
-}
+
 .user-recipe-ingredients{
     margin: auto;
     width: 90%;

@@ -15,7 +15,7 @@
                 <article>
                     <a href="{% url 'recipe' recipe_id=recipe.spoonacular_id %}" class="recipe-listing-link">
                         <div class="recipe-image">
-                            <img class="user-profile-recipe-img" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
+                            <img class="recipe-card-img" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
                         </div>
                         <div class="recipe-content">
                             <h3>{{ recipe.title }}</h3>
