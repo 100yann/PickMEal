@@ -342,10 +342,7 @@ article{
 
 #filters{
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 20px;
 }
 
-#filters div {
-    margin-left: 15px;
-}

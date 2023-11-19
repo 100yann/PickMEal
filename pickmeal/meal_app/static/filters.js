@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // display the most recent recipes first
             displayByDate('descending')
         } else {
-            // display the oldest recipe first (default order)
+            // display the oldest recipe first (default behaviour)
             displayByDate('ascending')
         }
     }
@@ -39,9 +39,6 @@ function displayTopRated() {
     });
 
     recipes.forEach((recipe) => {
-        if (recipe.hidden){
-            recipe.hidden = false;
-        }
         recipesContainer.appendChild(recipe);
     });
 }
@@ -67,9 +64,6 @@ function displayByDate(order) {
     })
 
     recipes.forEach((recipe) => {
-        if (recipe.hidden){
-            recipe.hidden = false;
-        }
         recipesContainer.appendChild(recipe);
     })
 }
