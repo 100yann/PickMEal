@@ -8,12 +8,21 @@
     <h1>Browse Recipes</h1>
 </div>
 <div id="filters">
-    <button id="top-rated-btn">Top Rated</button>
-    <button id="recently-added-btn">Recently Added</button>
-    <button id="vegan">Vegan</button>
-    <button id="vegetarian">Vegetarian</button>
-    <button id="dairy-free">Dairy Free</button>
-    <button id="gluten-free">Gluten Free</button>
+    <h6>Filters</h6>
+    <select id="dietary-filters" name="dietary-filters" class="form-select">
+        <option selected value="all">All</option>
+        <option value="vegan">Vegan</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="dairyfree">Dairy Free</option>
+        <option value="glutenfree">Gluten Free</option>
+    </select>
+
+    <h6>Sort By</h6>
+    <select id="sort-by" name="sort-by" class="form-select">
+        <option selected value="default">Default</option>
+        <option value="top-rated">Top Rated</option>
+        <option value="recently-added">Recently Added</option>
+    </select>
 
 </div>
 <div class="container recipe-list" id="saved-recipes">
@@ -33,6 +42,7 @@
                 </div>
                 <div class="recipe-content">
                     <h3 class="recipe-title">{{ recipe.title }}</h3>
+
                     <p hidden id="added-on" data-added-on='{{ recipe.added_on|date:"c" }}'></p>
                     <p hidden id="is-vegan" data-vegan='{{ recipe.recipedietarytags.vegan }}'></p>
                     <p hidden id="is-vegetarian" data-vegetarian='{{ recipe.recipedietarytags.vegetarian }}'></p>
