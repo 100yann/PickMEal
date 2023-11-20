@@ -6,7 +6,7 @@
 <div class="results-heading">
     <h1>Advanced Search</h1>
     <div class="search-div advanced-search-div">
-        <form action="{% url 'advanced_search' %}" method="POST">
+        <form action="{% url 'recipe_results' %}" method="POST">
             {% csrf_token %}
             <h6>Ingredients:</h6>
             <input name='recipe-search' id='advanced-recipe-search' type="text" class="form-control" placeholder="">

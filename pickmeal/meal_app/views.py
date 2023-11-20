@@ -106,56 +106,45 @@ def recipeInformation(recipe_id):
         return None
     
 
-def getAdvancedRecipe(diet=None, intolerances=None, prep_time=None):
+def getAdvancedRecipe(ingredients, diet=None, intolerances=None, prep_time=None):
     url = 'https://api.spoonacular.com/recipes/complexSearch'
     api_key = settings.SPOONACULAR_API_KEY
     params = {
+        'query': ingredients,
         'apiKey': api_key,
-        'diet': diet,
-        'intolerances': intolerances,
-        'maxReadyTime': prep_time,
         'number': 3
     }
+
+    if diet:
+        params['diet'] = diet
+    if intolerances: 
+        params['intolerances'] = intolerances
+    if prep_time:
+        params['maxReadyTime'] = prep_time
+
     try:
         response = requests.get(url, params)
         if response.status_code == 200:
             data = response.json()
-            return data
-
+            results = {}
+            for recipe in data['results']:
+                title = recipe['title']
+                results[title] = {
+                    'id': recipe['id'],
+                    'title': title,
+                    'image': recipe['image']
+                }
+            return results
     except requests.exceptions.RequestException as e:
         print(f"Request error: {e}")
         return None
-
-
+    
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
 
 
 def advanced_search(request):
-    if request.method == 'POST':
-
-        recipe_search = request.POST.get('recipe-search', '')
-        prep_time = request.POST.get('prep-time', '')
-
-        is_vegan = 'vegan' in request.POST
-        is_vegetarian = 'vegetarian' in request.POST
-        is_dairy_free = 'dairy-free' in request.POST
-        is_gluten_free = 'gluten-free' in request.POST
-
-        diet = ''
-        if is_vegan:
-            diet += 'vegan,'
-        if is_vegetarian:
-            diet += 'vegetarian'
-        
-        intolerances = ''
-        if is_dairy_free:
-            intolerances += 'dairy,'
-        if is_gluten_free:
-            intolerances += 'gluten'
-        print(getAdvancedRecipe(diet, intolerances, prep_time))
-        
     return render(request, 'advanced_search.html')
 
 
@@ -213,31 +202,53 @@ def results(request):
     if request.method == 'POST':
         data = request.POST
         ingredients = data.get('recipe-search')
-        recipes = getRecipes(ingredients)
-        # recipes= {'Goat Cheese Pesto Pizza': {'id': 644953, 'title': 'Goat Cheese Pesto Pizza', 'image': 'https://spoonacular.com/recipeImages/644953-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 2, 'missing_ings': ['Pizza Shell', 'Goat Cheese'], 'used_ings': ['Pesto', 'Tomatoes']}, 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry': {'id': 640513, 'title': 'Cream Cheese With Sun Dried Tomatoes And Pesto Pastry', 'image': 'https://spoonacular.com/recipeImages/640513-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 3, 'missing_ings': ['Block Of Cream Cheese', 'Regular Crescents From The Section Of The Grocery', 'Egg - Beat'], 'used_ings': ['Pesto', 'Sundried Tomatoes']}, 'Pesto Fresh Caprese Sandwich': {'id': 655822, 'title': 'Pesto Fresh Caprese Sandwich', 'image': 'https://spoonacular.com/recipeImages/655822-312x231.jpg', 'num_used_ings': 2, 'num_missing_ings': 4, 'missing_ings': ['Balsamic Vinegar', 'Ciabatta Roll', 'Basil Leaves', 'Mozzarella'], 'used_ings': ['Basil Pesto', 'Tomato']}}
-        if not recipes:
-            # handle error
-            ...
 
+        prep_time = request.POST.get('prep-time', '')
+        if prep_time: 
+            is_vegan = 'vegan' in request.POST
+            is_vegetarian = 'vegetarian' in request.POST
+            is_dairy_free = 'dairy-free' in request.POST
+            is_gluten_free = 'gluten-free' in request.POST
+
+            diet = ''
+            if is_vegan:
+                diet += 'vegan,'
+            if is_vegetarian:
+                diet += 'vegetarian'
+            
+            intolerances = ''
+            if is_dairy_free:
+                intolerances += 'dairy,'
+            if is_gluten_free:
+                intolerances += 'gluten'
+            recipes = getAdvancedRecipe(ingredients, diet, intolerances, prep_time)
+        
+        else:
+            recipes = getRecipes(ingredients)
+
+        message = None
+        if not recipes:
+            message = 'No recipes found that match the criteria, please refine your search'
         # Get the ids of the returned recipes
-        recipe_ids = [recipes[key]['id'] for key in recipes.keys()]
+        # recipe_ids = [recipes[key]['id'] for key in recipes.keys()]
 
         # Get recipies with the specified IDs and their ratings
-        recipes_with_ratings = Recipe.objects.filter(spoonacular_id__in=recipe_ids).annotate(avg_rating=Avg('ratings__rating'))
+        # recipes_with_ratings = Recipe.objects.filter(spoonacular_id__in=recipe_ids).annotate(avg_rating=Avg('ratings__rating'))
         
         # Get ID and avg rating of each recipe object
-        recipe_ratings = {recipe.id: recipe.avg_rating for recipe in recipes_with_ratings}
+        # recipe_ratings = {recipe.id: recipe.avg_rating for recipe in recipes_with_ratings}
 
         # iterate through the returned recipes
-        for key, value in recipes.items():
-            recipe_id = value['id']
-            if recipe_id in recipe_ratings:
-                # update the recipe's average rating
-                value['avg_rating'] = recipe_ratings[recipe_id]
+        # for key, value in recipes.items():
+        #     recipe_id = value['id']
+        #     if recipe_id in recipe_ratings:
+        #         # update the recipe's average rating
+        #         value['avg_rating'] = recipe_ratings[recipe_id]
 
         return render(request, 'results.html', context={
             'results': recipes,
-            'ingredients': ingredients.title()
+            'ingredients': ingredients.title(),
+            'message': message
             })
     
 

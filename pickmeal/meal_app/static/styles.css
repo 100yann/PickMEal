@@ -141,6 +141,18 @@ body{
 
 
 /* RESULTS */
+.message-container{
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    word-wrap: normal;
+}
+.message-container img {
+    display: block;
+    width: 75%;
+    height: auto;
+    margin: auto;
+}
 .results-heading{
     margin: 0 auto 15px;
     text-align: center;
@@ -185,6 +197,12 @@ article {
     .recipe-list {
         grid-template-columns: 1fr;
 
+    }
+    .message-container{
+        width: 70%;
+    }
+    .message-container img{
+        width: 100%;
     }
 }
 .recipe-listing-link{
