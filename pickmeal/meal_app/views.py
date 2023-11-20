@@ -106,9 +106,57 @@ def recipeInformation(recipe_id):
         return None
     
 
+def getAdvancedRecipe(diet=None, intolerances=None, prep_time=None):
+    url = 'https://api.spoonacular.com/recipes/complexSearch'
+    api_key = settings.SPOONACULAR_API_KEY
+    params = {
+        'apiKey': api_key,
+        'diet': diet,
+        'intolerances': intolerances,
+        'maxReadyTime': prep_time,
+        'number': 3
+    }
+    try:
+        response = requests.get(url, params)
+        if response.status_code == 200:
+            data = response.json()
+            return data
+
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        return None
+
+
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
+
+
+def advanced_search(request):
+    if request.method == 'POST':
+
+        recipe_search = request.POST.get('recipe-search', '')
+        prep_time = request.POST.get('prep-time', '')
+
+        is_vegan = 'vegan' in request.POST
+        is_vegetarian = 'vegetarian' in request.POST
+        is_dairy_free = 'dairy-free' in request.POST
+        is_gluten_free = 'gluten-free' in request.POST
+
+        diet = ''
+        if is_vegan:
+            diet += 'vegan,'
+        if is_vegetarian:
+            diet += 'vegetarian'
+        
+        intolerances = ''
+        if is_dairy_free:
+            intolerances += 'dairy,'
+        if is_gluten_free:
+            intolerances += 'gluten'
+        print(getAdvancedRecipe(diet, intolerances, prep_time))
+        
+    return render(request, 'advanced_search.html')
 
 
 def log_out(request):

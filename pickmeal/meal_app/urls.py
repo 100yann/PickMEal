@@ -8,6 +8,7 @@ from django.conf import settings
 urlpatterns = [
     path('', RedirectView.as_view(url='home'), name='index'),
     path('home', views.index, name='home'),
+    path('advanced_search', views.advanced_search, name='advanced_search'),
     path('register', views.register, name='register'),
     path('login', views.log_in, name='login'),
     path('logout', views.log_out, name='logout'),
