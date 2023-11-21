@@ -89,46 +89,6 @@ def unpack_recipe_data(data, **fields):
 
     return results
 
-def getRecipes(ingredients):
-    url = 'https://api.spoonacular.com/recipes/findByIngredients'
-    api_key = settings.SPOONACULAR_API_KEY
-
-    params = {
-    'apiKey': api_key,
-    'ingredients': ingredients, 
-    'ranking': 1,
-    'number': 5
-    }
-
-
-
-    try:
-        response = requests.get(url, params=params)
-    except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
-        return None
-    
-    data = response.json()
-    results = {}
-    for recipe in data:
-        id = recipe['id']
-        title = recipe['title'].title()
-        image = recipe['image']
-        num_used_ingredients = recipe['usedIngredientCount']
-        num_missing_ingredients = recipe['missedIngredientCount']
-        missing_ingredients = [j['name'].capitalize() for j in recipe['missedIngredients']]
-        used_ingredients = [j['name'].capitalize() for j in recipe['usedIngredients']]
-        results[title] = {
-            'id': id,
-            'title': title,
-            'image': image,
-            'num_used_ings': num_used_ingredients,
-            'num_missing_ings': num_missing_ingredients,
-            'missing_ings': missing_ingredients,
-            'used_ings': used_ingredients
-        }
-    return results
-
 
 # format recipe instructions
 def format_instructions(instructions):
@@ -154,70 +114,6 @@ def format_ingredients(ingredients):
     return set(ing['originalName'].capitalize() for ing in ingredients)
 
 
-# get detailed recipe information from
-# spoonacular API
-def recipeInformation(recipe_id):
-    api_key = settings.SPOONACULAR_API_KEY
-    params = {
-        'apiKey': api_key
-    }
-    try:
-        response = requests.get(url, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            recipe_data = {
-                'id': recipe_id,
-                'title': data['title'],
-                'image': data['image'],
-                'servings': data['servings'],
-                'summary': data['summary'],
-                'cooking_time': data['readyInMinutes'],
-                'instructions': format_instructions(data['instructions']),
-                'ingredients': format_ingredients(data['extendedIngredients']),
-                'dietary_tags': {'vegetarian': data['vegetarian'],
-                                 'vegan': data['vegan'],
-                                 'dairy_free': data['dairyFree'],
-                                 'gluten_free': data['glutenFree']}
-                }
-            return recipe_data
-    except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
-        return None
-    
-
-def getAdvancedRecipe(ingredients, diet=None, intolerances=None, prep_time=None):
-    url = 'https://api.spoonacular.com/recipes/complexSearch'
-    api_key = settings.SPOONACULAR_API_KEY
-    params = {
-        'query': ingredients,
-        'apiKey': api_key,
-        'number': 3
-    }
-
-    if diet:
-        params['diet'] = diet
-    if intolerances: 
-        params['intolerances'] = intolerances
-    if prep_time:
-        params['maxReadyTime'] = prep_time
-
-    try:
-        response = requests.get(url, params)
-        if response.status_code == 200:
-            data = response.json()
-            results = {}
-            for recipe in data['results']:
-                title = recipe['title']
-                results[title] = {
-                    'id': recipe['id'],
-                    'title': title,
-                    'image': recipe['image']
-                }
-            return results
-    except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
-        return None
-    
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
