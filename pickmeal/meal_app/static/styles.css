@@ -2,12 +2,17 @@ body{
     height: fit-content;
 }
 .navbar-brand {
+    font-size: 22px;
     font-family: 'Agbalumo', cursive;
     color: #609966!important;
+    padding: 0 0 6px 10px;
 }
 
 .nav-item, #recipe-title, h4, h1, h2, h3 {
     font-family: 'Paytone One';
+}
+.nav-item{
+    margin-left: 10px;
 }
 .btn {
     background-color: #609966!important;
