@@ -9,6 +9,40 @@ from django.db.models import Avg
 import time
 
 
+SPOONACULAR_APIS = {
+    'findByIngredients': 'https://api.spoonacular.com/recipes/findByIngredients',
+    'advancedSearch': 'https://api.spoonacular.com/recipes/complexSearch',
+}
+
+FIND_BY_INGREDIENTS_FIELDS = {
+    'id': 'id',
+    'image': 'image',
+    'num_used_ings': 'usedIngredientCount',
+    'num_missing_ings': 'missedIngredientCount',
+}
+
+def get_recipes(url, recipe_id=None, **parameters):
+    api_key = settings.SPOONACULAR_API_KEY
+    params = {
+        'apiKey': api_key
+    }
+
+    # update params
+    for key, value in parameters.items():
+        params[key] = value
+
+    try:
+        response = requests.get(url, params=params)
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        return None
+    else:
+        if response.status_code == 200:
+            data = json.loads()
+
+    
+
+
 def getRecipes(ingredients):
     url = 'https://api.spoonacular.com/recipes/findByIngredients'
     api_key = settings.SPOONACULAR_API_KEY
@@ -77,7 +111,6 @@ def format_ingredients(ingredients):
 # get detailed recipe information from
 # spoonacular API
 def recipeInformation(recipe_id):
-    url = f'https://api.spoonacular.com/recipes/{recipe_id}/information'
     api_key = settings.SPOONACULAR_API_KEY
     params = {
         'apiKey': api_key
@@ -141,6 +174,7 @@ def getAdvancedRecipe(ingredients, diet=None, intolerances=None, prep_time=None)
     
 # Create your views here.
 def index(request):
+
     return render(request, 'index.html')
 
 
@@ -209,22 +243,36 @@ def results(request):
             is_vegetarian = 'vegetarian' in request.POST
             is_dairy_free = 'dairy-free' in request.POST
             is_gluten_free = 'gluten-free' in request.POST
-
-            diet = ''
-            if is_vegan:
-                diet += 'vegan,'
-            if is_vegetarian:
-                diet += 'vegetarian'
             
-            intolerances = ''
+            url = SPOONACULAR_APIS['advancedSearch']
+            params = {
+                'query': ingredients,
+                'number': 6,
+                }
+
+            if is_vegan:
+                params['diet'] = params.get('diet', '') + 'vegan,'
+            if is_vegetarian:
+                params['diet'] = params.get('diet', '') + 'vegetarian,'
+
             if is_dairy_free:
-                intolerances += 'dairy,'
+                params['intoleranceds'] = params.get('diet', '') + 'dairy,'
             if is_gluten_free:
-                intolerances += 'gluten'
-            recipes = getAdvancedRecipe(ingredients, diet, intolerances, prep_time)
-        
+                params['intoleranceds'] = params.get('diet', '') + 'gluten,'
+
+            if prep_time:
+                params['maxReadyTime'] = prep_time
+
+            recipes = get_recipes(url, **params)
+                
         else:
-            recipes = getRecipes(ingredients)
+            url = SPOONACULAR_APIS['findByIngredients']
+            params = {
+                'ingredients': ingredients,    
+                'ranking': 1,
+                'number': 6
+            }
+            recipes = get_recipes(url, **params)
 
         message = None
         if not recipes:
@@ -267,7 +315,8 @@ def recipe(request, recipe_id):
 
     else:
         # get recipe details
-        recipe_data = recipeInformation(recipe_id)
+        url = f'https://api.spoonacular.com/recipes/{recipe_id}/information'
+        recipe_data = get_recipes(url, recipe_id)
 
         # save recipe to database
         recipe = Recipe.objects.create(spoonacular_id=recipe_id, 
