@@ -23,7 +23,7 @@
                         <img class="recipe-card-img" src="{{ result.image }}" alt="recipe-image">
                     </div>
                     <div class="recipe-content">
-                        <h3 class="recipe-title">{{ result.title }}</h3>
+                        <h3 class="recipe-title">{{ title }}</h3>
                         {% if result.num_used_ings %}
                             <h6>{{ result.num_used_ings }} Available Ingredients: </h6>
                             <p>{{ result.used_ings|join:", " }}</p>

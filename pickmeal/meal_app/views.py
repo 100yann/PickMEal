@@ -14,11 +14,29 @@ SPOONACULAR_APIS = {
     'advancedSearch': 'https://api.spoonacular.com/recipes/complexSearch',
 }
 
-FIND_BY_INGREDIENTS_FIELDS = {
-    'id': 'id',
-    'image': 'image',
-    'num_used_ings': 'usedIngredientCount',
-    'num_missing_ings': 'missedIngredientCount',
+RECIPE_DATA_FIELDS = {
+    'search_by_ingredients': {
+        'id': 'id',
+        'image': 'image',
+        'num_used_ingredients': 'usedIngredientCount',
+        'num_missing_ingredients': 'missedIngredientCount'
+    },
+    'advanced_search': {
+        'id': 'id',
+        'image': 'image',
+    },
+    'recipe_details': {
+        'id': 'id',
+        'title': 'title',
+        'image': 'image',
+        'servings': 'servings',
+        'summary': 'summary',
+        'cooking_time': 'readyInMinutes',
+        'is_vegan': 'vegan',
+        'is_vegetarian': 'vegetarian',
+        'is_dairy_free': 'dairyFree',
+        'is_gluten_free': 'glutenFree'
+    }
 }
 
 def get_recipes(url, recipe_id=None, **parameters):
@@ -38,10 +56,38 @@ def get_recipes(url, recipe_id=None, **parameters):
         return None
     else:
         if response.status_code == 200:
-            data = json.loads()
+            data = response.json()
+            return data
 
     
+def unpack_recipe_data(data, **fields):
+    results = {}
 
+    try:
+        data = data['results']
+    except (KeyError, TypeError):
+        pass
+    
+    if type(data) == list:
+        for recipe in data:
+            title = recipe['title'].title()
+            results[title] = {}
+            for key, value in fields.items():
+                results[title][key] = recipe[value]
+            
+            try:
+                results[title]['missing_ings'] = [j['name'].capitalize() for j in recipe['missedIngredients']]
+                results[title]['used_ings'] = [j['name'].capitalize() for j in recipe['usedIngredients']]
+            except (KeyError, TypeError):
+                pass
+    
+    else:
+        for key, value in fields.items():
+            results[key] = data[value]
+        results['instructions'] = format_instructions(data['instructions'])
+        results['ingredients'] = format_ingredients(data['extendedIngredients'])
+
+    return results
 
 def getRecipes(ingredients):
     url = 'https://api.spoonacular.com/recipes/findByIngredients'
@@ -174,7 +220,6 @@ def getAdvancedRecipe(ingredients, diet=None, intolerances=None, prep_time=None)
     
 # Create your views here.
 def index(request):
-
     return render(request, 'index.html')
 
 
@@ -263,7 +308,8 @@ def results(request):
             if prep_time:
                 params['maxReadyTime'] = prep_time
 
-            recipes = get_recipes(url, **params)
+            data = get_recipes(url, **params)
+            fields = RECIPE_DATA_FIELDS['advanced_search']
                 
         else:
             url = SPOONACULAR_APIS['findByIngredients']
@@ -272,8 +318,10 @@ def results(request):
                 'ranking': 1,
                 'number': 6
             }
-            recipes = get_recipes(url, **params)
-
+            data = get_recipes(url, **params)
+            fields = RECIPE_DATA_FIELDS['search_by_ingredients']
+        
+        recipes = unpack_recipe_data(data, **fields)
         message = None
         if not recipes:
             message = 'No recipes found that match the criteria, please refine your search'
@@ -316,8 +364,9 @@ def recipe(request, recipe_id):
     else:
         # get recipe details
         url = f'https://api.spoonacular.com/recipes/{recipe_id}/information'
-        recipe_data = get_recipes(url, recipe_id)
-
+        data = get_recipes(url, recipe_id)
+        fields = RECIPE_DATA_FIELDS['recipe_details']
+        recipe_data = unpack_recipe_data(data, **fields)
         # save recipe to database
         recipe = Recipe.objects.create(spoonacular_id=recipe_id, 
                                         title=recipe_data['title'],
@@ -334,10 +383,10 @@ def recipe(request, recipe_id):
                                                     )
         # save recipe's dietary tags to database
         recipe_dietary_tags = RecipeDietaryTags.objects.create(recipe=recipe,
-                                                                vegetarian=recipe_data['dietary_tags']['vegetarian'],
-                                                                vegan=recipe_data['dietary_tags']['vegan'],
-                                                                dairy_free=recipe_data['dietary_tags']['dairy_free'],
-                                                                gluten_free=recipe_data['dietary_tags']['gluten_free'],
+                                                                vegetarian=recipe_data['is_vegetarian'],
+                                                                vegan=recipe_data['is_vegan'],
+                                                                dairy_free=recipe_data['is_dairy_free'],
+                                                                gluten_free=recipe_data['is_gluten_free'],
                                                                 )
         recipe = Recipe.objects.get(spoonacular_id=recipe_id)
 
