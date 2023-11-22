@@ -111,8 +111,35 @@ def format_instructions(instructions):
 def format_ingredients(ingredients):
     # sometimes the API returns duplicate ingredients so ingredients 
     # is now a set instead of list
-    return set(ing['originalName'].capitalize() for ing in ingredients)
+    return set(ing['original'].capitalize() for ing in ingredients)
 
+
+def save_api_recipe_to_db(recipe_id):
+    # get recipe details
+    url = f'https://api.spoonacular.com/recipes/{recipe_id}/information'
+    data = get_recipes(url, recipe_id)
+    fields = RECIPE_DATA_FIELDS['recipe_details']
+    recipe_data = unpack_recipe_data(data, **fields)
+    # save recipe to database
+    recipe = Recipe.objects.create(spoonacular_id=recipe_id, 
+                                    title=recipe_data['title'],
+                                    )
+    # save recipe details to database
+    RecipeDetails.objects.create(recipe=recipe,
+                                ingredients=recipe_data['ingredients'],
+                                instructions=recipe_data['instructions'],
+                                description=recipe_data['summary'],
+                                cooking_time=recipe_data['cooking_time'],
+                                image=recipe_data['image'],
+                                servings=recipe_data['servings'],
+                                )
+    # save recipe's dietary tags to database
+    RecipeDietaryTags.objects.create(recipe=recipe,
+                                    vegetarian=recipe_data['is_vegetarian'],
+                                    vegan=recipe_data['is_vegan'],
+                                    dairy_free=recipe_data['is_dairy_free'],
+                                    gluten_free=recipe_data['is_gluten_free'],
+                                    )
 
 # Create your views here.
 def index(request):
@@ -239,7 +266,6 @@ def results(request):
                 # update the recipe's average rating
                 recipes[key]['avg_rating'] = recipe_ratings[recipe_id]
 
-        print(recipes)
         return render(request, 'results.html', context={
             'results': recipes,
             'ingredients': ingredients.title(),
@@ -261,32 +287,7 @@ def recipe(request, recipe_id):
         recipe = Recipe.objects.get(pk=recipe_id)
 
     else:
-        # get recipe details
-        url = f'https://api.spoonacular.com/recipes/{recipe_id}/information'
-        data = get_recipes(url, recipe_id)
-        fields = RECIPE_DATA_FIELDS['recipe_details']
-        recipe_data = unpack_recipe_data(data, **fields)
-        # save recipe to database
-        recipe = Recipe.objects.create(spoonacular_id=recipe_id, 
-                                        title=recipe_data['title'],
-                                        )
-                    
-        # save recipe details to database
-        recipe_details = RecipeDetails.objects.create(recipe=recipe,
-                                                    ingredients=recipe_data['ingredients'],
-                                                    instructions=recipe_data['instructions'],
-                                                    description=recipe_data['summary'],
-                                                    cooking_time=recipe_data['cooking_time'],
-                                                    image=recipe_data['image'],
-                                                    servings=recipe_data['servings'],
-                                                    )
-        # save recipe's dietary tags to database
-        recipe_dietary_tags = RecipeDietaryTags.objects.create(recipe=recipe,
-                                                                vegetarian=recipe_data['is_vegetarian'],
-                                                                vegan=recipe_data['is_vegan'],
-                                                                dairy_free=recipe_data['is_dairy_free'],
-                                                                gluten_free=recipe_data['is_gluten_free'],
-                                                                )
+        save_api_recipe_to_db(recipe_id)
         recipe = Recipe.objects.get(spoonacular_id=recipe_id)
 
     if request.method == 'POST':
