@@ -396,9 +396,30 @@ article{
 #dropdowns{
     display: flex;
 }
+#dropdowns div {
+    margin-left: 10px;
+}
+#search-div{
+    width: 25%;
+}
 #filters{
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
-
+@media (max-width: 1000px){
+    
+    #filters{
+        display: block;
+    }
+    #search-div{
+        width: 100%;
+    }
+    #dropdowns{
+        margin-top: 10px;
+        justify-content: space-between;
+    }
+    #dropdowns div {
+        margin-left: 0;
+    }
+}

@@ -26,6 +26,31 @@ document.addEventListener('DOMContentLoaded', () => {
             displayByDate('ascending')
         }
     }
+
+    // Get the search bar
+    const searchBar = document.getElementById('search-bar')
+    console.log(searchBar)
+    searchBar.onkeyup = (event) => {
+        const recipesContainer = document.getElementById('saved-recipes');
+        const recipes = Array.from(document.querySelectorAll('#recipe-card'));
+        var searchValue = searchBar.value.toLowerCase()
+        recipes.forEach((recipe) => {
+            if (searchValue){
+                const recipeTitle = recipe.querySelector('#recipe-title').textContent.toLowerCase()
+                if (recipeTitle.includes(searchValue)){
+                    if (recipe.hidden === true){
+                        recipe.hidden = false;
+                    }
+                } else {
+                    recipe.hidden = true;
+                }
+            } else {
+                if (recipe.hidden === true){
+                    recipe.hidden = false;
+                }
+            }
+        })
+    }  
 })
 
 function displayTopRated() {

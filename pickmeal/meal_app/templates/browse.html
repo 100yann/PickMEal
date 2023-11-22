@@ -10,6 +10,12 @@
 
 <div class="container">
     <div id="filters">
+        <div id="search-div">
+            <form action="/search" method="">
+                <h6>Search</h6>
+                <input type="text" class='form-control' id="search-bar" name="search-bar" placeholder="">
+            </form>
+        </div>
         <div id="dropdowns">
             <div>
                 <h6>Filters</h6>
@@ -30,9 +36,6 @@
                 </select>   
             </div>
         </div>
-        <div>
-
-        </div>
     </div>
     <div class="recipe-list" id="saved-recipes">
         {% for recipe in recipes %}
@@ -50,7 +53,7 @@
                         {% endif %}
                     </div>
                     <div class="recipe-content">
-                        <h3 class="recipe-title">{{ recipe.title }}</h3>
+                        <h3 class="recipe-title" id="recipe-title">{{ recipe.title }}</h3>
     
                         <p hidden id="added-on" data-added-on='{{ recipe.added_on|date:"c" }}'></p>
                         <p hidden id="is-vegan" data-vegan='{{ recipe.recipedietarytags.vegan }}'></p>
