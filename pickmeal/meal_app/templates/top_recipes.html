@@ -6,7 +6,11 @@
             <div>
                 <a href="{% url 'recipe'  recipe_id=top_recipe.id %}">
                 <h6>{{ top_recipe.title }}</h6>
-                <img src="{{ top_recipe.image }}" alt="" style="width: 150px; height: 100px;">            
+                {% if top_recipe.created_by %}
+                    <img src="{{ top_recipe.recipedetails.upload_image.url }}" alt="recipe-image"  style="width: 150px; height: 100px;">
+                {% else %}
+                    <img src="{{ top_recipe.recipedetails.image }}" alt="recipe-image"  style="width: 150px; height: 100px;">            
+                {% endif %}
                 </a>    
             </div>
         {% endfor %}
@@ -19,7 +23,11 @@
             <div>
                 <a href="{% url 'recipe'  recipe_id=recent_recipe.id %}">
                 <h6>{{ recent_recipe.title }}</h6>
-                <img src="{{ recent_recipe.image }}" alt="" style="width: 150px; height: 100px;">            
+                {% if recent_recipe.created_by %}
+                    <img src="{{ recent_recipe.recipedetails.upload_image.url }}" alt="recipe-image"  style="width: 150px; height: 100px;">
+                {% else %}
+                    <img src="{{ recent_recipe.recipedetails.image }}" alt="recipe-image"  style="width: 150px; height: 100px;">            
+                {% endif %}
                 </a>    
             </div>
         {% endfor %}

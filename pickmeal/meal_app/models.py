@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django import forms
 from django.db.models import Avg
-import json
-
+from .utils import resize_image
+from PIL import Image
 
 # Create your models here.
 class User(AbstractUser):
@@ -50,6 +50,13 @@ class RecipeDetails(models.Model):
     servings = models.SmallIntegerField(blank=True)
     image = models.URLField(blank=True, null=True)
     upload_image = models.ImageField(upload_to=upload_location, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.upload_image.path)
+        output_size = (556, 370)
+        img.thumbnail(output_size)
+        img.save(self.upload_image.path)
 
     def ingredients_to_list(self):
         replacements = {"[": "{", "]":"}", '"': "'", "{'": "", "'}": ""}

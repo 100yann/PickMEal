@@ -68,10 +68,10 @@ function saveRecipe(isSaved, csrfToken, button){
     })
     .then(response => {
         if (isSaved === 'false'){
-            button.innerHTML = '<i class="fa-solid fa-bookmark fa-lg mr-3"></i>Recipe Saved'
+            button.innerHTML = '<i class="fa-solid fa-bookmark fa-lg fa-fw"></i>Recipe Saved'
             button.setAttribute('data-saved', 'true')
         } else {
-            button.innerHTML = '<i class="fa-regular fa-bookmark fa-lg mr-3"></i>Save Recipe'
+            button.innerHTML = '<i class="fa-regular fa-bookmark fa-lg fa-fw"></i>Save Recipe'
             button.setAttribute('data-saved', 'false') 
         }
     })

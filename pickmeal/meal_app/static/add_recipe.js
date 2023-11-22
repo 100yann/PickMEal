@@ -63,7 +63,6 @@ function checkInput(recipeTitle, recipeDescr){
     const cookingTimeValue = document.getElementById('id_cooking_time').value
     const recipeImage = document.getElementById('id_upload_image').value
     const validateFields = [titleValue, descriptionValue, instructionsValue, ingredientsValue, servingsValue, cookingTimeValue, recipeImage]
-    console.log(servingsValue)
     // if there's an empty field disable the button
     validateFields.some(element => {
         if (element === ''){

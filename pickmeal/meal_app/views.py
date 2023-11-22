@@ -2,11 +2,10 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.conf import settings
 import requests
 import json
-import os
 from .models import User, RegisterUser, Recipe, Rating, NewRecipe, RecipeDetails, RecipeDietaryTags
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
-import time
+
 
 
 SPOONACULAR_APIS = {
@@ -140,6 +139,9 @@ def save_api_recipe_to_db(recipe_id):
                                     dairy_free=recipe_data['is_dairy_free'],
                                     gluten_free=recipe_data['is_gluten_free'],
                                     )
+
+
+
 
 # Create your views here.
 def index(request):
@@ -283,9 +285,11 @@ def recipe(request, recipe_id):
     if Recipe.objects.filter(spoonacular_id=recipe_id).exists():
         recipe = Recipe.objects.get(spoonacular_id=recipe_id)
 
+    # check if it's a user recipe
     elif Recipe.objects.filter(pk=recipe_id).exists():
         recipe = Recipe.objects.get(pk=recipe_id)
 
+    # if it doesn't exist save it to the db
     else:
         save_api_recipe_to_db(recipe_id)
         recipe = Recipe.objects.get(spoonacular_id=recipe_id)
@@ -337,15 +341,14 @@ def recipe(request, recipe_id):
     else:
         user_rating = False  
 
-    
-    # add necessary fields to recipe_data
-    # recipe_data['top_recipes'] = Recipe.getTopRecipes(num=3)
-    # recipe_data['recent_recipes'] = Recipe.getRecentRecipes(num=3)
+
     return render(request, 'view_recipe.html', context={
         'recipe': recipe,
         'recipe_saved': recipe_saved,
         'user_rating': user_rating,
-        'avg_rating': avg_rating['rating__avg']
+        'avg_rating': avg_rating['rating__avg'],
+        'top_recipes': Recipe.getTopRecipes(num=3),
+        'recent_recipes': Recipe.getRecentRecipes(num=3)
 
     })
 
@@ -361,6 +364,10 @@ def new_recipe(request):
             image = form.cleaned_data['upload_image']
             servings = form.cleaned_data['servings']
             cooking_time = form.cleaned_data['cooking_time']
+            is_vegan = 'vegan' in request.POST
+            is_vegetarian = 'vegetarian' in request.POST
+            is_dairy_free = 'dairy-free' in request.POST
+            is_gluten_free = 'gluten-free' in request.POST
             
             # Get instructions
             instructions = request.POST.getlist('recipe-instructions')
@@ -384,6 +391,14 @@ def new_recipe(request):
                 cooking_time=cooking_time,
                 servings=servings,
                 upload_image=image,
+            )
+            
+            RecipeDietaryTags.objects.create(
+                recipe=recipe_instance,
+                vegetarian=is_vegetarian,
+                vegan=is_vegan,
+                dairy_free =is_dairy_free,
+                gluten_free=is_gluten_free
             )
 
             return redirect('recipe', recipe.pk)
