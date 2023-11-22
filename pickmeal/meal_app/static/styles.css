@@ -1,6 +1,10 @@
 body{
     height: fit-content;
 }
+a, u {
+    text-decoration: none;
+}
+
 .navbar-brand {
     font-size: 22px;
     font-family: 'Agbalumo', cursive;
@@ -389,7 +393,9 @@ article{
 .recipe-rating h6{
     margin: auto;
 }
-
+#dropdowns{
+    display: flex;
+}
 #filters{
     display: flex;
     justify-content: space-between;

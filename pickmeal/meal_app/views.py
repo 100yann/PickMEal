@@ -218,25 +218,28 @@ def results(request):
             fields = RECIPE_DATA_FIELDS['search_by_ingredients']
         
         recipes = unpack_recipe_data(data, **fields)
+        
         message = None
         if not recipes:
             message = 'No recipes found that match the criteria, please refine your search'
+        
         # Get the ids of the returned recipes
-        # recipe_ids = [recipes[key]['id'] for key in recipes.keys()]
+        recipe_ids = [recipes[key]['id'] for key in recipes.keys()]
 
         # Get recipies with the specified IDs and their ratings
-        # recipes_with_ratings = Recipe.objects.filter(spoonacular_id__in=recipe_ids).annotate(avg_rating=Avg('ratings__rating'))
+        recipes_with_ratings = Recipe.objects.filter(spoonacular_id__in=recipe_ids).annotate(avg_rating=Avg('ratings__rating'))
         
         # Get ID and avg rating of each recipe object
-        # recipe_ratings = {recipe.id: recipe.avg_rating for recipe in recipes_with_ratings}
-
+        recipe_ratings = {recipe.spoonacular_id: recipe.avg_rating for recipe in recipes_with_ratings}
+        
         # iterate through the returned recipes
-        # for key, value in recipes.items():
-        #     recipe_id = value['id']
-        #     if recipe_id in recipe_ratings:
-        #         # update the recipe's average rating
-        #         value['avg_rating'] = recipe_ratings[recipe_id]
+        for key in recipes.keys():
+            recipe_id = recipes[key]['id']
+            if recipe_id in recipe_ratings:
+                # update the recipe's average rating
+                recipes[key]['avg_rating'] = recipe_ratings[recipe_id]
 
+        print(recipes)
         return render(request, 'results.html', context={
             'results': recipes,
             'ingredients': ingredients.title(),

@@ -10,23 +10,28 @@
 
 <div class="container">
     <div id="filters">
-        <div>
-            <h6>Filters</h6>
-            <select id="dietary-filters" name="dietary-filters" class="form-select">
-                <option selected value="all">All</option>
-                <option value="vegan">Vegan</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="dairyfree">Dairy Free</option>
-                <option value="glutenfree">Gluten Free</option>
-            </select>        
+        <div id="dropdowns">
+            <div>
+                <h6>Filters</h6>
+                <select id="dietary-filters" name="dietary-filters" class="form-select">
+                    <option selected value="all">All</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="dairyfree">Dairy Free</option>
+                    <option value="glutenfree">Gluten Free</option>
+                </select>                  
+            </div>
+            <div>
+                <h6>Sort By</h6>
+                <select id="sort-by" name="sort-by" class="form-select">
+                    <option selected value="default">Default</option>
+                    <option value="top-rated">Top Rated</option>
+                    <option value="recently-added">Recently Added</option>
+                </select>   
+            </div>
         </div>
         <div>
-            <h6>Sort By</h6>
-            <select id="sort-by" name="sort-by" class="form-select">
-                <option selected value="default">Default</option>
-                <option value="top-rated">Top Rated</option>
-                <option value="recently-added">Recently Added</option>
-            </select>        
+
         </div>
     </div>
     <div class="recipe-list" id="saved-recipes">

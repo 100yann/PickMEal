@@ -24,13 +24,19 @@
                     </div>
                     <div class="recipe-content">
                         <h3 class="recipe-title">{{ title }}</h3>
-                        {% if result.num_used_ings %}
-                            <h6>{{ result.num_used_ings }} Available Ingredients: </h6>
+                        {% if result.num_used_ingredients %}
+                            <h6>{{ result.num_used_ingredients }} Available Ingredients: </h6>
                             <p>{{ result.used_ings|join:", " }}</p>
                             <hr>
-                            <h6>{{ result.num_missing_ings }} Needed Ingredients: </h6>
+                            <h6>{{ result.num_missing_ingredients }} Needed Ingredients: </h6>
                             <p>{{ result.missing_ings|join:", " }}</p>
                         {% endif %}
+                        
+                        {% if result.avg_rating %}
+                            <hr>
+                            <h6 id="rating">Rating: {{ result.avg_rating }}</h6>
+                        {% endif %}
+                    
                     </div>
                 </a>
             </article>
