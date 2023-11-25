@@ -13,6 +13,13 @@
                 <img id="recipe-image" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
             {% endif %}
             <h1 id="recipe-title">{{ recipe.title }}</h1>
+            {% if recipe.recipedietarytags.check_tags %}
+            <div class="tags">
+                {% for tag in recipe.recipedietarytags.check_tags %}
+                    <div class="{{tag}}">{{tag}}</div>
+                {% endfor %}                
+            </div>
+            {% endif %}
             <p>{{ recipe.recipedetails.description|safe }}</p>
             <hr>
             <h4>Servings: {{ recipe.recipedetails.servings }}</h4>
@@ -39,7 +46,6 @@
                 </ol>
             {% endif %}
             <hr>
-    
     
             <div id="recipe-interactions">    
                 {% csrf_token %}

@@ -77,7 +77,14 @@ class RecipeDietaryTags(models.Model):
     dairy_free = models.BooleanField(null=True)
     gluten_free = models.BooleanField(null=True)
 
+    def check_tags(self):
 
+        tags = []
+        for field_name in self._meta.get_fields():
+            if field_name.name not in ['recipe', 'id'] and getattr(self, field_name.name):
+                tags.append(field_name.name.title().replace('_', ' '))
+
+        return tags
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
     rating = models.IntegerField()

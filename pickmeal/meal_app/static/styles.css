@@ -232,6 +232,31 @@ article {
 .extra-info{
     display: none;
 }
+.tags {
+    font-size: 12px;
+    display: flex;
+    margin-bottom: 20px;
+}
+.tags div {
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin-right: 5px;
+}
+.Dairy{
+    color: white;
+    background-color: rgb(59, 128, 255);
+}
+.Gluten{
+    background-color: #fad6a5;   
+}
+.Vegetarian{
+    color: white;
+    background-color: #609966;
+}
+.Vegan{
+
+    background-color: rgb(166, 255, 125);  
+}
 
 @media (min-width: 1000px){
     #recipe-image{
