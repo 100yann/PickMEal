@@ -134,6 +134,29 @@ def results(request):
                 # update the recipe's average rating
                 recipes[key]['avg_rating'] = recipe_ratings[recipe_id]
 
+        # get recipes that are already stored in the website DB
+        user_recipes = search_user_recipes(ingredients)
+        for matching_recipe in user_recipes.keys():
+            recipe_title = matching_recipe.recipe.title
+
+            # check if the api has already returned this recipe
+            if recipe_title not in recipes.keys():
+                num_missing, num_used, list_used, list_missing = get_used_ings(
+                    ings_needed=matching_recipe.ingredients, 
+                    ings_available=ingredients)
+                # update recipes that will be passed to results.html    
+                recipes[recipe_title] = {
+                    'id': matching_recipe.recipe.pk,
+                    'num_used_ingredients': num_used,
+                    'num_missing_ingredients': num_missing,
+                    'missing_ings': list_missing,
+                    'used_ings': list_used
+                }
+                if matching_recipe.recipe.created_by:
+                    recipes[recipe_title]['image'] = matching_recipe.upload_image.url
+                else:
+                    recipes[recipe_title]['image'] = matching_recipe.image
+
         return render(request, 'results.html', context={
             'results': recipes,
             'ingredients': ingredients.title(),
@@ -240,7 +263,8 @@ def new_recipe(request):
 
             # Get ingredients
             ingredients = request.POST.getlist('recipe-ingredients')
-
+            ingredients_title = [ingredient.title() for ingredient in ingredients]
+            ingredients_str = ', '.join(ingredients_title)
             # Get current user
             user_instance = User.objects.get(pk=request.user.id)
 
@@ -251,7 +275,7 @@ def new_recipe(request):
             recipe_instance = Recipe.objects.get(pk=recipe.pk)
             RecipeDetails.objects.create(
                 recipe=recipe_instance,
-                ingredients=ingredients,
+                ingredients=ingredients_str,
                 instructions=instructions,
                 description=description,
                 cooking_time=cooking_time,

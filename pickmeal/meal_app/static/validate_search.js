@@ -7,16 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const searchButton = document.getElementById('submit-search')
     searchButton.onclick = ((event) => {
-        const ingredients = document.getElementById('recipe-search')
-        if (ingredients.value === ''){
-            ingredients.style.border = '2px solid red'
-            ingredients.placeholder = 'This field cannot be empty!'
-            ingredients.classList.add('recipe-search-error')
-            event.preventDefault()
-        }
+        validSearch(event)
     })
 })
 
+function validSearch(event){
+    const ingredients = document.getElementById('recipe-search')
+    if (ingredients.value === ''){
+        ingredients.style.border = '2px solid red'
+        ingredients.placeholder = 'This field cannot be empty!'
+        ingredients.classList.add('recipe-search-error')
+        event.preventDefault()
+    }
+}
 // When advanced search is clicked the form is not submitted
 // and instead the user is taken to an advanced search page
 function advancedSearch(event){

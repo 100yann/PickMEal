@@ -62,10 +62,18 @@
                         <p hidden id="is-glutenfree" data-glutenfree='{{ recipe.recipedietarytags.gluten_free }}'></p>
     
                         <div class="recipe-rating">
-                            {% if recipe.calculate_average_rating %}
+                            <div>
+                                {% if recipe.calculate_average_rating %}
                                 <h6 id="rating" data-rating="{{ recipe.calculate_average_rating }}">Rating: {{ recipe.calculate_average_rating }}</h6>
-                            {% endif %}
-                            <h6>Servings: {{ recipe.recipedetails.servings }}</h6>
+                                {% endif %}
+                            </div>
+                            {% if recipe.recipedietarytags.check_tags %}
+                                <div class="tags">
+                                    {% for tag in recipe.recipedietarytags.check_tags %}
+                                        <div class="{{tag}}">{{tag}}</div>
+                                    {% endfor %}                
+                                </div>
+                            {% endif %}                        
                         </div>
                     </div>
                 </a>

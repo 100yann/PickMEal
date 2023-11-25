@@ -10,12 +10,12 @@
         <h5>Your personal cooking assistant!</h5> 
     </div>
     <div class="search-div">
-        <form action="{% url 'recipe_results' %}" method="POST">
+        <form id="myForm" action="{% url 'recipe_results' %}" method="POST">
             {% csrf_token %}
             <label id='recipe-label' for="recipe-search">Enter a list of ingredients you currently have:</label>
             <input name='recipe-search' id='recipe-search' type="text" class="form-control" placeholder="Ingredients">
+            <input type="submit" name="" id="submit-search" value="Submit" class="btn btn-primary" form="myForm"> 
             <button onclick="advancedSearch(event)" class="btn btn-primary">Advanced Search</button>
-            <input type="submit" name="" id="submit-search" value="Submit" class="btn btn-primary">
 
         </form>
 

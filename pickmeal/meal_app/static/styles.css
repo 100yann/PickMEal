@@ -191,7 +191,9 @@ article {
     font-family: 'Paytone One';
     margin: 10px 10px 35px;
 }
-
+.recipe-content{
+    padding: 10px;
+}
 .recipe-content p, .recipe-content h6 {
     text-align: left;
 }
@@ -427,8 +429,9 @@ article{
     text-align: center;
     width: 100%;
     position: absolute;
-    top: 92%;
+    top: 90%;
     left: 0;
+    padding: 0 10px;
 }
 .recipe-rating h6{
     margin: auto;

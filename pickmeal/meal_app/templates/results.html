@@ -28,6 +28,8 @@
                             <h6>{{ result.num_used_ingredients }} Available Ingredients: </h6>
                             <p>{{ result.used_ings|join:", " }}</p>
                             <hr>
+                        {% endif %}
+                        {% if result.num_missing_ingredients %}
                             <h6>{{ result.num_missing_ingredients }} Needed Ingredients: </h6>
                             <p>{{ result.missing_ings|join:", " }}</p>
                         {% endif %}

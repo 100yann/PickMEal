@@ -1,6 +1,7 @@
 from .models import Recipe, RecipeDetails, RecipeDietaryTags
 from django.conf import settings
 import requests
+import re
 
 
 SPOONACULAR_APIS = {
@@ -135,3 +136,41 @@ def save_api_recipe_to_db(recipe_id):
                                     gluten_free=recipe_data['is_gluten_free'],
                                     )
 
+
+def search_user_recipes(ings):
+    results = {}
+    ings = ings.split(',')
+    for ing in ings:
+        matching_recipes = RecipeDetails.objects.filter(ingredients__contains=ing)
+        for match in matching_recipes:
+            results[match] = results.get(match, []) + [ing]
+    return results
+
+def ingredients_to_list(ings):
+    if ings[0] == "{" or ings[0] == "[":
+        inside_braces = ings[1:-1]
+    else:
+        inside_braces = ings
+    # Split by commas outside of quotes
+    split_elements = re.split(r",(?=(?:[^']*'[^']*')*[^']*$)", inside_braces)
+
+    # Remove extra spaces and quotes
+    ingredient_list = [element.strip(" '") for element in split_elements]
+
+    return ingredient_list
+
+def get_used_ings(ings_needed, ings_available):
+    ings_needed_list = ingredients_to_list(ings_needed)
+    ings_available_list = ings_available.split(', ')
+
+    num_missing = len(ings_needed_list)
+    num_used = 0
+    used_ings = []
+    for ing in ings_available_list:
+        for needed_ing in ings_needed_list:
+            if ing in needed_ing or ing.lower() in needed_ing or ing.title() in needed_ing:
+                num_missing -= 1
+                num_used += 1
+                used_ings.append(ings_needed_list.pop(ings_needed_list.index(needed_ing)))
+                
+    return num_missing, num_used, used_ings, ings_needed_list
