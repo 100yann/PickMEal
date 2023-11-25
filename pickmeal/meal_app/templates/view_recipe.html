@@ -4,83 +4,85 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 recipe-body">
-            {% if recipe.created_by %}
-                <img id="recipe-image" src="{{ recipe.recipedetails.upload_image.url }}" alt="recipe-image">
-            {% else %}
-                <img id="recipe-image" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
-            {% endif %}
-            <h1 id="recipe-title">{{ recipe.title }}</h1>
-            {% if recipe.recipedietarytags.check_tags %}
-            <div class="tags">
-                {% for tag in recipe.recipedietarytags.check_tags %}
-                    <div class="{{tag}}">{{tag}}</div>
-                {% endfor %}                
-            </div>
-            {% endif %}
-            <p>{{ recipe.recipedetails.description|safe }}</p>
-            <hr>
-            <h4>Servings: {{ recipe.recipedetails.servings }}</h4>
-            {% if avg_rating %}
-                <h4>Average Rating: <span style="color: #609966">{{ avg_rating }}</span></h4>
-            {% endif %} 
-            
-            <hr>
-            <h4>Ingredients</h4>
-            <ul>
-                {% for ing in recipe.recipedetails.ingredients_to_list %}
-                    <li>{{ ing }}</li>
-                {% endfor %}
-            </ul>
-            <hr>
-            <h4>Instructions</h4>
-            {% if not recipe.created_by %}
-                {{ recipe.recipedetails.instructions|safe }}
-            {% else %}
-                <ol>
-                {% for step in recipe.recipedetails.instructions_to_list %}
-                    <li>{{ step }}</li>
-                {% endfor %}
-                </ol>
-            {% endif %}
-            <hr>
-    
-            <div id="recipe-interactions">    
-                {% csrf_token %}
-                {% if user.is_authenticated %}
-                    <div class="recipe-save">
-                        <h6>Save this recipe</h6>
-                        {% if recipe_saved %}
-                            <button class="btn btn-primary" id="save-recipe" data-saved="true"><i class="fa-solid fa-bookmark fa-lg fa-fw"></i>Recipe Saved</button>
-                        {% else %}
-                            <button class="btn btn-primary" id="save-recipe" data-saved="false"><i class="fa-regular fa-bookmark fa-lg fa-fw"></i>Save Recipe</button>
-                        {% endif %}                  
-                    </div>
-                    <div class="recipe-rate">
-                        <h6>Rate this recipe</h6>
-                        <div class="rating">
-                            <i class="fa-solid fa-burger fa-lg"></i>
-                            <i class="fa-solid fa-burger fa-lg"></i>
-                            <i class="fa-solid fa-burger fa-lg"></i>
-                            <i class="fa-solid fa-burger fa-lg"></i>
-                            <i class="fa-solid fa-burger fa-lg"></i>
-                        </div>
-                    </div> 
+<div id="view-recipe-page-body">
+    <div class="container view-recipe-container">
+        <div class="row">
+            <div class="col-lg-8 recipe-body">
+                {% if recipe.created_by %}
+                    <img id="recipe-image" src="{{ recipe.recipedetails.upload_image.url }}" alt="recipe-image">
                 {% else %}
-                    <h6>Log in to save and rate this recipe!</h6>
+                    <img id="recipe-image" src="{{ recipe.recipedetails.image }}" alt="recipe-image">
                 {% endif %}
+                <h1 id="recipe-title">{{ recipe.title }}</h1>
+                {% if recipe.recipedietarytags.check_tags %}
+                <div class="tags">
+                    {% for tag in recipe.recipedietarytags.check_tags %}
+                        <div class="{{tag}}">{{tag}}</div>
+                    {% endfor %}                
+                </div>
+                {% endif %}
+                <p>{{ recipe.recipedetails.description|safe }}</p>
+                <hr>
+                <h4>Cooking Time: {{ recipe.recipedetails.cooking_time }} mins.</h4>
+                <h4>Servings: {{ recipe.recipedetails.servings }}</h4>
+                {% if avg_rating %}
+                    <h4>Average Rating: <span style="color: #609966">{{ avg_rating }}</span></h4>
+                {% endif %} 
+                
+                <hr>
+                <h4>Ingredients</h4>
+                <ul>
+                    {% for ing in recipe.recipedetails.ingredients_to_list %}
+                        <li>{{ ing }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <h4>Instructions</h4>
+                {% if not recipe.created_by %}
+                    {{ recipe.recipedetails.instructions|safe }}
+                {% else %}
+                    <ol>
+                    {% for step in recipe.recipedetails.instructions_to_list %}
+                        <li>{{ step }}</li>
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                <hr>
+        
+                <div id="recipe-interactions">    
+                    {% csrf_token %}
+                    {% if user.is_authenticated %}
+                        <div class="recipe-save">
+                            <h6>Save this recipe</h6>
+                            {% if recipe_saved %}
+                                <button class="btn btn-primary" id="save-recipe" data-saved="true"><i class="fa-solid fa-bookmark fa-lg fa-fw"></i>Recipe Saved</button>
+                            {% else %}
+                                <button class="btn btn-primary" id="save-recipe" data-saved="false"><i class="fa-regular fa-bookmark fa-lg fa-fw"></i>Save Recipe</button>
+                            {% endif %}                  
+                        </div>
+                        <div class="recipe-rate">
+                            <h6>Rate this recipe</h6>
+                            <div class="rating">
+                                <i class="fa-solid fa-burger fa-lg"></i>
+                                <i class="fa-solid fa-burger fa-lg"></i>
+                                <i class="fa-solid fa-burger fa-lg"></i>
+                                <i class="fa-solid fa-burger fa-lg"></i>
+                                <i class="fa-solid fa-burger fa-lg"></i>
+                            </div>
+                        </div> 
+                    {% else %}
+                        <h6>Log in to save and rate this recipe!</h6>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-lg-2 extra-info">
+                {% include "top_recipes.html" %}
             </div>
         </div>
-        
-        <div class="col-lg-2 extra-info">
-            {% include "top_recipes.html" %}
-        </div>
+
     </div>
-
 </div>
-
 {% endblock %}
 
 {% block scripts %}
