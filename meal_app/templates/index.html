@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %} PickMeal {% endblock %}
+{% block body %}        
+<div class="page-heading">
+    <img class='background-img' src="/static/homepage-bg.jpg" alt="">        
+
+    <div class="page-title">
+        <h1>PickMeal</h1>
+        <h5>Your personal cooking assistant!</h5> 
+    </div>
+    <div class="search-div">
+        <form id="myForm" action="{% url 'recipe_results' %}" method="POST">
+            {% csrf_token %}
+            <label id='recipe-label' for="recipe-search">Enter a list of ingredients you currently have:</label>
+            <input name='recipe-search' id='recipe-search' type="text" class="form-control" placeholder="Ingredients">
+            <input type="submit" name="" id="submit-search" value="Submit" class="btn btn-primary" form="myForm"> 
+            <button onclick="advancedSearch(event)" class="btn btn-primary">Advanced Search</button>
+
+        </form>
+
+    </div>
+    <p id="photo-attribution">Photo by <a href="https://unsplash.com/@marisolbenitez?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Marisol Benitez</a> on <a href="https://unsplash.com/photos/pile-of-vegetables-QvkAQTNj4zk?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a></p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'validate_search.js' %}"></script>
+{% endblock %}

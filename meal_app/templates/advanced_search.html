@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %}Advanced Search {% endblock %}
+
+{% block body %}
+<div class="results-heading">
+    <h1>Advanced Search</h1>
+    <div class="search-div advanced-search-div">
+        <form action="{% url 'recipe_results' %}" method="POST">
+            {% csrf_token %}
+            <h6>Ingredients:</h6>
+            <input name='recipe-search' id='advanced-recipe-search' type="text" class="form-control" placeholder="">
+            
+            <h6>Max Prep Time:</h6>
+            <input type="number" name="prep-time" id="prep-time" class="form-control">
+            
+            <h6>Dietary Preferences:</h6>
+            <div id="advanced-filters">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" name="vegan" type="checkbox" role="switch" id="flexSwitchCheckVegan">
+                    <label class="form-check-label" for="flexSwitchCheckVegan">Vegan</label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" name="vegetarian" type="checkbox" role="switch" id="flexSwitchCheckVegetarian">
+                    <label class="form-check-label" for="flexSwitchCheckVegetarian">Vegetarian</label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" name="dairy-free" type="checkbox" role="switch" id="flexSwitchCheckDairyFree">
+                    <label class="form-check-label" for="flexSwitchCheckDairyFree">Dairy Free</label>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" name="gluten-free" type="checkbox" role="switch" id="flexSwitchCheckGlutenFree">
+                    <label class="form-check-label" for="flexSwitchCheckGlutenFree">Gluten Free</label>
+                  </div>          
+            </div>
+            <input type="submit" name="" id="submit-search" value="Submit" class="btn btn-primary">
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'validate_search.js' %}"></script>
+{% endblock %}
