@@ -74,12 +74,17 @@ def results(request):
         ingredients = data.get('recipe-search')
 
         prep_time = request.POST.get('prep-time', '')
-        if prep_time: 
-            is_vegan = 'vegan' in request.POST
-            is_vegetarian = 'vegetarian' in request.POST
-            is_dairy_free = 'dairy-free' in request.POST
-            is_gluten_free = 'gluten-free' in request.POST
-            
+        is_vegan = 'vegan' in request.POST
+        is_vegetarian = 'vegetarian' in request.POST
+        is_dairy_free = 'dairy-free' in request.POST
+        is_gluten_free = 'gluten-free' in request.POST
+
+        is_advanced_search = False
+        if is_vegan or is_vegetarian or is_dairy_free or is_gluten_free or prep_time:
+            is_advanced_search = True
+
+        if is_advanced_search:
+            tags_to_check = []
             url = SPOONACULAR_APIS['advancedSearch']
             params = {
                 'query': ingredients,
@@ -87,13 +92,17 @@ def results(request):
                 }
 
             if is_vegan:
+                tags_to_check.append('vegan')
                 params['diet'] = params.get('diet', '') + 'vegan,'
             if is_vegetarian:
+                tags_to_check.append('vegetarian')
                 params['diet'] = params.get('diet', '') + 'vegetarian,'
 
             if is_dairy_free:
+                tags_to_check.append('dairy_free')
                 params['intoleranceds'] = params.get('diet', '') + 'dairy,'
             if is_gluten_free:
+                tags_to_check.append('gluten_free')
                 params['intoleranceds'] = params.get('diet', '') + 'gluten,'
 
             if prep_time:
@@ -135,9 +144,12 @@ def results(request):
                 recipes[key]['avg_rating'] = recipe_ratings[recipe_id]
 
         # get recipes that are already stored in the website DB
-        user_recipes = search_user_recipes(ingredients)
+        if is_advanced_search:
+            user_recipes = search_user_recipes(ingredients, tags_to_check)
+        else:
+            user_recipes = search_user_recipes(ingredients)
         for matching_recipe in user_recipes.keys():
-            recipe_title = matching_recipe.recipe.title
+            recipe_title = matching_recipe.recipe.title.title()
 
             # check if the api has already returned this recipe
             if recipe_title not in recipes.keys():
@@ -156,11 +168,12 @@ def results(request):
                     recipes[recipe_title]['image'] = matching_recipe.upload_image.url
                 else:
                     recipes[recipe_title]['image'] = matching_recipe.image
-
+                
         return render(request, 'results.html', context={
             'results': recipes,
             'ingredients': ingredients.title(),
-            'message': message
+            'message': message,
+            'is_advanced_search': is_advanced_search
             })
     
 

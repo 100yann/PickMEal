@@ -24,21 +24,22 @@
                     </div>
                     <div class="recipe-content">
                         <h3 class="recipe-title">{{ title }}</h3>
-                        {% if result.num_used_ingredients %}
-                            <h6>{{ result.num_used_ingredients }} Available Ingredients: </h6>
-                            <p>{{ result.used_ings|join:", " }}</p>
-                            <hr>
+                        {% if not is_advanced_search %}
+                            {% if result.num_used_ingredients %}
+                                <h6>{{ result.num_used_ingredients }} Available Ingredients: </h6>
+                                <p>{{ result.used_ings|join:", " }}</p>
+                                <hr>
+                            {% endif %}
+                            {% if result.num_missing_ingredients %}
+                                <h6>{{ result.num_missing_ingredients }} Needed Ingredients: </h6>
+                                <p>{{ result.missing_ings|join:", " }}</p>
+                            {% endif %}
+                            
+                            {% if result.avg_rating %}
+                                <hr>
+                                <h6 id="rating">Rating: {{ result.avg_rating }}</h6>
+                            {% endif %}
                         {% endif %}
-                        {% if result.num_missing_ingredients %}
-                            <h6>{{ result.num_missing_ingredients }} Needed Ingredients: </h6>
-                            <p>{{ result.missing_ings|join:", " }}</p>
-                        {% endif %}
-                        
-                        {% if result.avg_rating %}
-                            <hr>
-                            <h6 id="rating">Rating: {{ result.avg_rating }}</h6>
-                        {% endif %}
-                    
                     </div>
                 </a>
             </article>

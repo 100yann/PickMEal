@@ -137,13 +137,24 @@ def save_api_recipe_to_db(recipe_id):
                                     )
 
 
-def search_user_recipes(ings):
+def search_user_recipes(ings, dietary_tags=None):
+
     results = {}
     ings = ings.split(',')
     for ing in ings:
         matching_recipes = RecipeDetails.objects.filter(ingredients__contains=ing)
-        for match in matching_recipes:
-            results[match] = results.get(match, []) + [ing]
+
+        if dietary_tags:
+            for match in matching_recipes:
+                recipe = match.recipe
+                recipe_dietary_tags = RecipeDietaryTags.objects.filter(recipe=recipe).first()
+                if recipe_dietary_tags and recipe_dietary_tags.check_matching_tags(dietary_tags):
+                    results[match] = results.get(match, []) + [ing]
+
+        else:
+            for match in matching_recipes:
+                results[match] = results.get(match, []) + [ing]
+    
     return results
 
 def ingredients_to_list(ings):

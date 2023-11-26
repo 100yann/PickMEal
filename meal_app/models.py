@@ -88,6 +88,20 @@ class RecipeDietaryTags(models.Model):
                 tags.append(field_name.name.title().replace('_', ' '))
 
         return tags
+    
+    def check_matching_tags(self, dietary_tags):
+        fields = {
+            'vegan': self.vegan, 
+            'vegetarian': self.vegetarian,
+            'dairy_free': self.dairy_free,
+            'gluten_free': self.gluten_free
+            }
+        for tag in dietary_tags:
+            if fields.get(tag, False):
+                continue
+            else:
+                return False
+        return True
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
     rating = models.IntegerField()
