@@ -4,6 +4,8 @@ from .models import User, RegisterUser, Recipe, Rating, NewRecipe, RecipeDetails
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
 from .utils import *
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -254,7 +256,7 @@ def recipe(request, recipe_id):
 
     })
 
-
+@login_required(login_url='/login')
 def new_recipe(request):
     if request.method == 'POST':
         form = NewRecipe(request.POST, request.FILES)
