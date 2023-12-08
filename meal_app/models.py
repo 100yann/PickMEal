@@ -8,7 +8,6 @@ from PIL import Image
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     saved_recipes = models.ManyToManyField('Recipe', related_name='users_who_saved')
-
     
     def get_recipes(self):
         return self.saved_recipes
@@ -124,6 +123,7 @@ class RegisterUser(forms.ModelForm):
             visible.field.widget.attrs['class'] = 'form-control'
         
         self.fields['email'].required = True
+        self.fields['password'].helptext = ''
 
 
 class NewRecipe(forms.ModelForm):

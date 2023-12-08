@@ -53,6 +53,8 @@ def get_recipes(url, recipe_id=None, **parameters):
         if response.status_code == 200:
             data = response.json()
             return data
+        elif response.status_code == 402:
+            return False
 
     
 def unpack_recipe_data(data, **fields):

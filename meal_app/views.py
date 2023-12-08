@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Avg
 from .utils import *
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 
@@ -49,7 +50,6 @@ def register(request):
             username = data['username']
             email = data['email']
             password = data['password'] 
-
             user = User.objects.create(username=username, email=email)
             user.set_password(password)
             user.save()
@@ -123,12 +123,13 @@ def results(request):
             data = get_recipes(url, **params)
             fields = RECIPE_DATA_FIELDS['search_by_ingredients']
         
-        recipes = unpack_recipe_data(data, **fields)
-        
-        message = None
-        if not recipes:
-            message = 'No recipes found that match the criteria, please refine your search'
-        
+        if not data:
+            message = 'We\'ve exceed our API limit.'
+        else:
+            recipes = unpack_recipe_data(data, **fields)
+            if not recipes:
+                message = 'No recipes found that match the criteria, please refine your search.'
+            
         # Get the ids of the returned recipes
         recipe_ids = [recipes[key]['id'] for key in recipes.keys()]
 
